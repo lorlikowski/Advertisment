@@ -16,7 +16,9 @@ class Advertisement(Base):
     date_modified = Column(DateTime, index=True)
     date_start = Column(DateTime, index=True)
     date_end = Column(DateTime, index=True)
-    category = Column(Integer, ForeignKey("categories.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
+    category = relationship("Category", lazy="joined", back_populates="advertisements")
 
     content = Column(Text) #TODO: specify content type
     #published
@@ -25,9 +27,16 @@ class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, index=True)#TODO: add slug and visual name and unique on slug
     parent_id = Column(Integer, ForeignKey("categories.id"))
 
     parent = relationship("Category", back_populates="subcategories", remote_side=[id])
 
     subcategories = relationship("Category", back_populates="parent")
+
+    advertisements = relationship("Advertisement", back_populates="category")
+
+    def __str__(self) -> str:
+        return self.name
+    def __repr__(self) -> str:
+        return self.name

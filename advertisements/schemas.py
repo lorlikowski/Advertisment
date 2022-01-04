@@ -12,13 +12,14 @@ class AdvertisementBase(BaseModel):
 
 class AdvertisementModel(AdvertisementBase):
     id: int
+    category: Optional[str]
 
     class Config:
         orm_mode = True
 
 class AdvertisementCreate(AdvertisementBase):
     content: str
-    # category: Optional[str] TODO: 
+    category: Optional[str]
 
 
 class AdvertisementContent(BaseModel):
@@ -29,6 +30,7 @@ class AdvertisementContent(BaseModel):
 
 class CategoryBase(BaseModel):
     name: str
+    parent: Optional[str]
 
 class CategoryCreate(CategoryBase):
     pass
