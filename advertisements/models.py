@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Column, DateTime, Text, ForeignKey
+from sqlalchemy import Integer, String, Column, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
 # from sqlalchemy.dialects.sqlite import UU
 # from sqlalchemy.orm import relationship
@@ -21,7 +21,13 @@ class Advertisement(Base):
     category = relationship("Category", lazy="joined", back_populates="advertisements")
 
     content = Column(Text) #TODO: specify content type
+
+    views = Column(Integer, default=0, index=True)
     #published
+
+    __table_args__ = (
+        Index("advertisements_popular_in_category", "category_id", "views"),
+    )
 
 class Category(Base):
     __tablename__ = "categories"
@@ -40,3 +46,10 @@ class Category(Base):
         return self.name
     def __repr__(self) -> str:
         return self.name
+
+# class AdvertisementViewCount(Base):
+#     __tablename__ = "advertisement_views"
+#     advertisement_id = Column(Integer, ForeignKey("Advertisement.id"), primary_key=True, index=True)
+#     advertisement = relationship("Advertisement")
+
+#     views = Column(Integer, default=0)

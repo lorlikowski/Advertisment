@@ -13,6 +13,7 @@ class AdvertisementBase(BaseModel):
 class AdvertisementModel(AdvertisementBase):
     id: int
     category: Optional[str]
+    views: int
 
     class Config:
         orm_mode = True
@@ -21,12 +22,22 @@ class AdvertisementCreate(AdvertisementBase):
     content: str
     category: Optional[str]
 
+class AdvertisementViews(BaseModel):
+    views: int
+
+    class Config:
+        orm_mode = True
 
 class AdvertisementContent(BaseModel):
     content: str
 
     class Config:
         orm_mode = True
+
+class AdvertisementUpdate(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    content: Optional[str]
 
 class CategoryBase(BaseModel):
     name: str
