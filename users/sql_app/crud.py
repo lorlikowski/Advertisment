@@ -16,7 +16,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
-def update_user(db: Session, user: models.User, new_data: schemas.ChangeUser):
+def update_user(db: Session, user: models.User, new_data: schemas.UserChange):
     user.email = new_data.email
     user.password = bcrypt.hashpw(new_data.password.encode(), bcrypt.gensalt())
     db.commit()

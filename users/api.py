@@ -6,7 +6,7 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from pydantic import BaseModel
-from . import utils
+import utils
 import secrets
 
 models.Base.metadata.create_all(bind=engine)
