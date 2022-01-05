@@ -34,7 +34,7 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
         content={"detail": exc.message}
     )
 
-@app.post("/register", response_model=schemas.UserCreate)
+@app.post("/register", response_model=schemas.User)
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -55,13 +55,15 @@ def login(user: schemas.UserCreate, db: Session = Depends(get_db), Authorize: Au
 
     return {"key": access_token}
 
-@app.post("/change_data", response_model=schemas.UserCreate)
+@app.post("/change_data", response_model=schemas.User)
 def change_data(user: schemas.UserChange, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
     current_user = Authorize.get_jwt_subject()
-    db_user = utils.check_change_user(db, current_user, user)
-    if not db_user:
+
+    if not utils.check_change_user(db, current_user, user):
         raise HTTPException(status_code=400, detail="Not valid data")
+
+    db_user = crud.get_user(db, current_user)
 
     return crud.update_user(db, db_user, user)
 
@@ -72,5 +74,8 @@ def change_data(user: schemas.UserChange, db: Session = Depends(get_db), Authori
 
 @app.get("/mail/{user_id}")
 def get_mail(user_id: int, db:Session = Depends(get_db)):
-    return {"email": crud.get_user(db, user_id).email}
+    db_user = crud.get_user(db, user_id)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="User with such id does not exist")
+    return {"email": db_user.email}
 
