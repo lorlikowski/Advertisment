@@ -23,11 +23,13 @@ def add_relation(relation: schemas.RelationCreate, db: Session = Depends(get_db)
     return crud.create_relation(db, relation)
 
 
-@app.get("/relations/{user_id}")
-def get_user_followers(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_followers(db, user_id)
+@app.get("/followers/{type}/{object_id}")
+def get_user_followers(object_id: int, type: str, db: Session = Depends(get_db)):
+    return crud.get_followers(db, type, object_id)
 
-@app.get("/relations/{type}/user_id")
+@app.get("/following/{type}/{user_id}")
 def get_following(type: str, user_id: int, db: Session = Depends(get_db)):
     return crud.get_following(db, type, user_id)
+
+
 
