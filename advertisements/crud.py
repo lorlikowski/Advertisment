@@ -1,10 +1,10 @@
+from enum import Enum
 from datetime import datetime
 from typing import Any, Dict, List, Union
 from sqlalchemy.orm import Session
 from pydantic.error_wrappers import ErrorWrapper
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
-from sqlalchemy.sql.functions import mode
 from . import models, schemas
 
 
@@ -28,6 +28,83 @@ def get_visible_advertisements_for_user(
             models.Advertisement.owner == user, models.Advertisement.date_start <= date
         )
         .all()
+    )
+
+
+class AdvertisementOrdering(str, Enum):
+    TITLE_ASC = "title"
+    TITLE_DSC = "title__dsc"
+    DATE_START_ASC = "date_start"
+    DATE_START_DSC = "date_start__dsc"
+    DATE_END_ASC = "date_end"
+    DATE_END_DSC = "date_end__dsc"
+    VIEWS_ASC = "views"
+    VIEWS_DSC = "views__dsc"
+
+
+advertisement_filter_columns = {
+    "title": models.Advertisement.title,
+    "date_start": models.Advertisement.date_start,
+    "date_end": models.Advertisement.date_end,
+    "views": models.Advertisement.views,
+}
+
+
+def get_advertisements(
+    db: Session,
+    limit: int,
+    offset: int = 0,
+    ordering: str = AdvertisementOrdering.VIEWS_DSC,
+    **filters: Dict[str, any],
+):
+    processed_filters = []
+
+    for field, value in filters.items():
+        try:
+            if field.endswith("__contains"):
+                processed_filters.append(
+                    advertisement_filter_columns[
+                        field[: field.rfind("__contains")]
+                    ].contains(value)
+                )
+            elif field.endswith("__gt"):
+                processed_filters.append(
+                    advertisement_filter_columns[field[: field.rfind("__gt")]] > value
+                )
+            elif field.endswith("__lt"):
+                processed_filters.append(
+                    advertisement_filter_columns[field[: field.rfind("__gt")]] < value
+                )
+        except KeyError:
+            raise RequestValidationError(
+                [
+                    ErrorWrapper(
+                        ValueError(f"Invalid query filter: ({field}, {value})"), field
+                    )
+                ]
+            )
+
+    if ordering not in list(AdvertisementOrdering):
+        raise RequestValidationError(
+            [
+                ErrorWrapper(
+                    ValueError(f"Invalid query ordering: {ordering}"), "ordering"
+                )
+            ]
+        )
+    if ordering.endswith("__dsc"):
+        processed_ordering = advertisement_filter_columns[
+            ordering[: ordering.rfind("__dsc")]
+        ].desc()
+    else:
+        processed_ordering = advertisement_filter_columns[ordering]
+
+    return (
+        db.query(models.Advertisement)
+        .filter(*processed_filters)
+        .order_by(processed_ordering, models.Advertisement.id)
+        .offset(offset)
+        .limit(limit)
     )
 
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -40,6 +41,38 @@ def users_advertisements(user_id: str, db: Session = Depends(get_db)):
     advertisements = crud.get_visible_advertisements_for_user(db, user_id)
     return [
         crud.serialize_advertisement(advertisement) for advertisement in advertisements
+    ]
+
+
+@app.get("/advertisements/", response_model=List[schemas.AdvertisementModel])
+def get_advertisements(
+    title__contains: Optional[str] = None,
+    date_start__lt: Optional[str] = None,
+    date_start__gt: Optional[str] = None,
+    date_end__lt: Optional[str] = None,
+    date_end__gt: Optional[str] = None,
+    limit: Optional[int] = 20,
+    skip: Optional[int] = 0,
+    ordering: Optional[crud.AdvertisementOrdering] = "views__dsc",
+    db: Session = Depends(get_db),
+):
+    extra_filters = {}
+    if title__contains is not None:
+        extra_filters["title__contains"] = title__contains
+    if date_start__lt is not None:
+        extra_filters["date_start__lt"] = datetime.datetime(date_start__lt)
+    if date_start__gt is not None:
+        extra_filters["date_start__gt"] = datetime.datetime(date_start__gt)
+    if date_end__lt is not None:
+        extra_filters["date_end__lt"] = datetime.datetime(date_end__lt)
+    if date_end__gt is not None:
+        extra_filters["date_end__gt"] = datetime.datetime(date_end__gt)
+
+    return [
+        crud.serialize_advertisement(advertisement)
+        for advertisement in crud.get_advertisements(
+            db, limit=limit, offset=skip, ordering=ordering, **extra_filters
+        )
     ]
 
 
