@@ -9,7 +9,7 @@ module.exports = {
     // **optional** default: `[{ root: './' }]`
     // support monorepos
     projects: [
-      './advertisments' // Shorthand for specifying only the project root location
+      './frontend/advertisments' // Shorthand for specifying only the project root location
     //   {
     //     // **required**
     //     // Where is your project?
