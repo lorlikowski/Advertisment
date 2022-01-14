@@ -67,10 +67,12 @@ def change_data(user: schemas.UserChange, db: Session = Depends(get_db), Authori
 
     return crud.update_user(db, db_user, user)
 
-# Now we don't have any other public data than mail
-#@app.get("/public_data/{user_id}")
-#def public_data(user_id: int, db: Session = Depends(get_db)):
-#    return {}
+@app.get("/public_data/{user_id}", response_model=schemas.UserPublic)
+def public_data(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="User with such id does not exist")
+    return db_user
 
 @app.get("/mail/{user_id}")
 def get_mail(user_id: int, db:Session = Depends(get_db)):

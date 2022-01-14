@@ -17,6 +17,9 @@ class UserChange(UserCreate):
     password1: str
     is_admin: Optional[bool]
 
+class UserPublic(BaseModel):
+    is_admin: bool
+
 
 
 class User(UserBase):
