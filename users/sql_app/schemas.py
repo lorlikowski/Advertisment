@@ -20,6 +20,10 @@ class UserChange(UserCreate):
 class UserPublic(BaseModel):
     is_admin: bool
 
+class UserLogin(UserBase):
+
+    password: str
+
 
 
 class User(UserBase):

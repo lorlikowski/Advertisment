@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from pydantic.error_wrappers import ErrorWrapper
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
-from . import models, schemas
+import models, schemas
 
 
 def get_category_by_name(db: Session, name: str):

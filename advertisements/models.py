@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 # from sqlalchemy.dialects.sqlite import UU
 # from sqlalchemy.orm import relationship
 
-from .database import Base
+from database import Base
 
 class Advertisement(Base):
     __tablename__ = "advertisements"

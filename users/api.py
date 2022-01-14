@@ -43,7 +43,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 @app.post("/login")
-def login(user: schemas.UserCreate, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+def login(user: schemas.UserLogin, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     db_user = crud.get_user_by_email(db, email=user.email)
     
     if not db_user:
