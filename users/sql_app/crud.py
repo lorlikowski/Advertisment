@@ -17,6 +17,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 def update_user(db: Session, user: models.User, new_data: schemas.UserChange):
+    if new_data.is_admin is not None:
+        user.is_admin = new_data.is_admin
     user.email = new_data.email
     user.password = bcrypt.hashpw(new_data.password.encode(), bcrypt.gensalt())
     db.commit()
