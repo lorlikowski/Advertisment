@@ -7,7 +7,6 @@ from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from pydantic import BaseModel
 import utils
-import secrets
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -21,7 +20,9 @@ def get_db():
         db.close()
 
 class Settings(BaseModel):
-    authjwt_secret_key: str = secrets.token_urlsafe(256)
+    authjwt_algorithm: str = "RS512"
+    authjwt_public_key: str = open("RS512.key.pub", "r").read()
+    authjwt_private_key: str = open("RS512.key", "r").read()
 
 @AuthJWT.load_config
 def get_config():
