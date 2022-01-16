@@ -1,5 +1,7 @@
 from sqlalchemy import Integer, String, Column, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 # from sqlalchemy.dialects.sqlite import UU
 # from sqlalchemy.orm import relationship
 
@@ -24,6 +26,11 @@ class Advertisement(Base):
 
     views = Column(Integer, default=0, index=True)
     #published
+
+    @property
+    def visible(self):
+        date = datetime.now()
+        return self.date_start <= date
 
     __table_args__ = (
         Index("advertisements_popular_in_category", "category_id", "views"),
