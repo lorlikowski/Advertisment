@@ -1,0 +1,7 @@
+fastapi[all]
+sqlalchemy
+psycopg2-binary
+fastapi-jwt-auth[asymmetric]
+redis
+celery
+httpx

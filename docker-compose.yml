@@ -12,8 +12,9 @@ services:
       - USERS_SERVICE_HOST_URL=http://users:8000/
       - RELATIONS_SERVICE_HOST_URL=http://relations:8000/
       - DATABASE_URI=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db/advertisement_db_dev
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
     depends_on:
-      - user_db
+      - advertisement_db
 
   advertisement_db:
     image: postgres:12.1-alpine
@@ -32,9 +33,10 @@ services:
     ports:
       - 8002:8000
     environment:
-      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisements:8000/
+      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisement:8000/
       - DATABASE_URI=postgresql://user_db_username:user_db_password@user_db/user_db_dev
       - RELATIONS_SERVICE_HOST_URL=http://relations:8000/
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
     depends_on:
       - user_db
 
@@ -57,7 +59,8 @@ services:
     environment:
       - DATABASE_URI=postgresql://relation_db_username:relation_db_password@relation_db/relation_db_dev
       - USERS_SERVICE_HOST_URL=http://users:8000/
-      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisements:8000/
+      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisement:8000/
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
     depends_on:
       - relation_db
 
@@ -69,6 +72,37 @@ services:
       - POSTGRES_USER=relation_db_username
       - POSTGRES_PASSWORD=relation_db_password
       - POSTGRES_DB=relation_db_dev
+  
+  notifications:
+    build: ./notifications
+    ports:
+      - 8004:8000
+    command: uvicorn api:app --host 0.0.0.0 --reload
+    volumes:
+      - ./notifications:/app/
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  worker:
+    build: ./notifications
+    command: celery --app=worker.celery  worker --loglevel=info
+    volumes:
+      - ./notifications:/app/
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisement:8000/
+      - USERS_SERVICE_HOST_URL=http://users:8000/
+      - RELATIONS_SERVICE_HOST_URL=http://relations:8000/
+    depends_on:
+      - notifications
+      - redis
+
+  redis:
+    image: redis:6-alpine  
 
 volumes:
   postgres_data_user:
