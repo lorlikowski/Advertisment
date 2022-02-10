@@ -28,7 +28,7 @@ def get_users(advertisement_id: int, owner_id: int):
     return list(users_following_advertisement | users_following_owner)
 
 def advertisement_to_string(advertisement):
-    advertisement_list = [key + ": " + advertisement[key] for key in advertisement.keys()]
+    advertisement_list = [key + ": " + str(advertisement[key]) for key in advertisement.keys()]
     return '\n'.join(advertisement_list)
 
 def construct_message(advertisement, owner, type):
@@ -36,7 +36,7 @@ def construct_message(advertisement, owner, type):
 Subject: Notification for advertisement {}
 
 Hi,
-This message was send because of the following event:
+This message was sent because of the following event:
 Type: {}
 Avertisement: 
 {}
