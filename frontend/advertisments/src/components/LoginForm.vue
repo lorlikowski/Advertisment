@@ -2,7 +2,7 @@
   <b-container fluid="md">
     <br>
     <br>
-    <b-form @submit="onSubmit" v-if="show">
+    <b-form @submit="login" v-if="show">
       <b-form-group
         id="input-group-1"
         label="Email:"
@@ -28,6 +28,9 @@
       </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
     </b-form>
+    <center v-if="error">
+        <p style="color:red">Błędne dane</p>
+    </center>    
     <center>
         Nie jesteś jeszcze zarejestrowany? <router-link to="/register">Kliknij tutaj</router-link>
     </center>
@@ -36,6 +39,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import * as authStore from "@/store/modules/auth"
 
   export default Vue.extend({
     data() {
@@ -44,13 +48,28 @@ import Vue from "vue";
           email: '',
           password: '',
         },
-        show: true
+        show: true,
+        error: false
       }
     },
     methods: {
-      onSubmit(event: Event) {
-        event.preventDefault()
-        alert(JSON.stringify(this.form))
+      async login(event: Event) {
+        event.preventDefault();
+        
+        try {
+            const response = await authStore.actions.login({username: this.form.email, password: this.form.password});
+            if (response) {
+                this.$router.push('/');
+            }
+            else {
+                this.error = true;
+            }
+        }
+        catch(err) {
+            console.error(err);
+            this.error = true;
+        }
+        
       },
     }
   })
