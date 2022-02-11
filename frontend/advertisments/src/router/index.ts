@@ -25,6 +25,11 @@ const routes: Array<RouteConfig> = [
       id: route.params.id
     }),
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/Login.vue')
   }
 ]
 
