@@ -6,6 +6,7 @@
       Użytkownik {{id}} wita na swoim profilu!
       <User :user="user" :id="id"/>
     </b-container>
+    <UserForm/>
     <b-container fluid="md">
     <br>
     <br>  
@@ -32,12 +33,14 @@ import Vue from 'vue';
 import User from '@/components/User.vue';
 import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import UserList from '@/components/UserList.vue'
+import UserForm from '@/components/UserForm.vue'
 
 export default Vue.extend({
   components: {
     User,
     AdvertisementsList,
-    UserList
+    UserList,
+    UserForm
   },
   props: {
       id: String
