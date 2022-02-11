@@ -2,7 +2,7 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/users/1">Mój profil</router-link>
-      <router-link to="/"> Zaloguj się</router-link>
+      <router-link to="/login"> Zaloguj się</router-link>
       <router-link to="/"> Wyloguj </router-link>
     </div>
 </template>
