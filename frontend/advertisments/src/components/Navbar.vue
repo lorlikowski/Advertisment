@@ -4,13 +4,11 @@
       <b-nav-item :to="{name: 'Home'}">Ogłoszenia</b-nav-item>
       <b-nav-item :to="{name: 'Create'}" v-if="authenticated">Dodaj ogłoszenie</b-nav-item>
     </b-navbar-nav>
-    <b-navbar-nav class="ml-auto" v-if="!authenticated">
-      <b-nav-item :to="{name: 'Login'}">Zaloguj się</b-nav-item>
-      <b-nav-item :to="{name: 'User', params: {id: myProfile}}">Mój profil</b-nav-item>
-    </b-navbar-nav>
-    <b-navbar-nav>
+    <b-navbar-nav class="ml-auto">
+      <b-nav-item :to="{name: 'Login'}"  v-if="!authenticated">Zaloguj się</b-nav-item>
+      <b-nav-item :to="{name: 'User', params: {id: myProfile}}"  v-if="authenticated" >Mój profil</b-nav-item>
       <b-button v-on:click="logout()" v-if="authenticated" variant="success"> Wyloguj </b-button>
-    </b-navbar-nav>  
+    </b-navbar-nav>
   </b-navbar>
 </template>
 

@@ -6,7 +6,7 @@
       Użytkownik {{id}} wita na swoim profilu!
       <User :user="user" :id="id" :key="userprofile"/>
     </b-container>
-    <UserForm/>
+    <UserForm v-if="isAuthenticated && authUser == id"/>
     <b-container fluid="md">
     <br>
     <br>  
@@ -35,6 +35,7 @@ import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import UserList from '@/components/UserList.vue'
 import UserForm from '@/components/UserForm.vue'
 import * as auth_api from '@/api/auth'
+import * as auth_store from '@/store/modules/auth'
 
 export default Vue.extend({
   components: {
@@ -45,6 +46,14 @@ export default Vue.extend({
   },
   props: {
       id: String
+  },
+  computed: {
+    isAuthenticated() {
+      return auth_store.getters.isAuthenticated();
+    },
+    authUser() {
+      return auth_store.getters.authUser();
+    }
   },
   data() {
     return {
@@ -58,7 +67,7 @@ export default Vue.extend({
       followads: 0
     }
   },
-  async created() {
+  async created() { //TODO better await
     const user = await auth_api.get_user(this.id);
     this.user = user.data;
     this.userprofile++;

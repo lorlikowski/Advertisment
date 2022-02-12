@@ -1,6 +1,7 @@
 import { BareActionContext } from "vuex-typex"
 import { storeBuilder, RootState } from "@/store/RootState"
 import * as auth_api from '@/api/auth'
+import { session } from "@/api/session"
 
 
 const TOKEN_STORAGE_KEY = "NOTE"
@@ -78,6 +79,7 @@ async function login(context: ActionContext, payload: { username: string; passwo
     try {
     const response = await auth_api.login(username, password);
     localStorage.setItem(TOKEN_STORAGE_KEY, response.data.key);
+    session.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.key;
     mutations.LoginSuccess(response.data.id);
     }
     catch(error) {
@@ -92,15 +94,7 @@ async function logout(context: ActionContext) {
 }
 
 
-/**
- * 
- * @param {string} data.username
- * @param {string} data.email
- * @param {string} data.password
- * @param {string} data.first_name
- * @param {string} data.last_name
- * @param {number} data.graduation_year
- */
+
 
 interface data {
     email: string
@@ -121,9 +115,33 @@ async function register(context: ActionContext,  data: data) {
     }
 }
 
+interface changeData {
+    password: string,
+    password1: string
+}
+
+async function change(context: ActionContext, changeData: changeData) {
+    try {
+        const user = getters.authUser();
+        if (user != null) {
+            const publicData = await auth_api.get_user(user);
+            const response = await auth_api.change(publicData.data, changeData);
+            return response.status == 200;
+        }
+        else {
+            return false;
+        }
+    }
+    catch(error) {
+        console.log(error);
+        return false;
+    }
+}
+
 
 export const actions = {
   login: b.dispatch(login),
   logout: b.dispatch(logout),
-  register: b.dispatch(register)
+  register: b.dispatch(register),
+  change: b.dispatch(change)
 }

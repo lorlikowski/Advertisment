@@ -6,6 +6,16 @@ interface data {
     password1: string;
 }
 
+interface changeData {
+    password: string,
+    password1: string
+}
+
+
+interface publicData {
+    email: string,
+    is_admin: boolean
+}
 
 export function login(login: string, password: string) {
     return session.post("login", {email: login, password: password})
@@ -29,4 +39,8 @@ export function get_advertisement(id: number) {
 
 export function register(data: data) {
     return session.post("/register", {"email": data.email, "password": data.password, "is_admin": false})
+}
+
+export function change(publicData: publicData,  data: changeData) {
+    return session.post("/change_data", {"email": publicData.email, "password": data.password, "password1": data.password1, "is_admin": publicData.is_admin})
 }
