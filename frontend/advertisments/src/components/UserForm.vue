@@ -10,7 +10,7 @@
       >
         <b-form-input
           id="input-1"
-          v-model="form.new_password"
+          v-model="form.password"
           type="password"
           placeholder="Enter new password"
           required
@@ -20,7 +20,7 @@
       <b-form-group id="input-group-2" label="Powtórz hasło:" label-for="input-2">
         <b-form-input
           id="input-2"
-          v-model="form.new_password1"
+          v-model="form.password1"
           type="password"
           placeholder="Enter new password"
           required
@@ -28,25 +28,33 @@
       </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
     </b-form>
+    <center>
+      <p v-if="success" style="color:green">Zmiana danych przebiegła pomyślnie</p>
+      <p v-if="error" style="color:red">Podano błędne dane</p>
+    </center>
   </b-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import * as auth_store from '@/store/modules/auth';
 
   export default Vue.extend({
     data() {
       return {
         form: {
-          new_password: '',
-          new_password1: '',
+          password: '',
+          password1: '',
         },
-        show: true
+        show: true,
+        success: false,
+        error: false,
       }
     },
     methods: {
-      onSubmit() {
-        alert(JSON.stringify(this.form))
+      async onSubmit() {
+          this.success = await auth_store.actions.change(this.form);
+          this.error = !this.success;
       },
     }
   })
