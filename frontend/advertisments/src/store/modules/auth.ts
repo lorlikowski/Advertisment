@@ -32,10 +32,12 @@ export const getters = {
 function LoginStart(state: AuthState) {
     state.authenticated = false;
     state.error = false;
+    state.user = null;
 }
 
-function LoginSuccess(state: AuthState) {
+function LoginSuccess(state: AuthState, id: string) {
     localStorage.setItem('lo', "1");
+    state.user = id;
     state.authenticated = true;
     state.error = false;
 }
@@ -43,11 +45,13 @@ function LoginSuccess(state: AuthState) {
 function LoginError(state: AuthState) {
     state.authenticated = false;
     state.error = true;
+    state.user = null;
 }
 
 function Logout(state: AuthState) {
     state.authenticated = false;
     state.error = false;
+    state.user = null;
 }
 
 function setBase(state: AuthState) {
@@ -74,12 +78,12 @@ async function login(context: ActionContext, payload: { username: string; passwo
     try {
     const response = await auth_api.login(username, password);
     localStorage.setItem(TOKEN_STORAGE_KEY, response.data.key);
+    mutations.LoginSuccess(response.data.id);
     }
     catch(error) {
         mutations.LoginError();
         return false;
     }
-    mutations.LoginSuccess();
     return true;        
 }
 
@@ -102,18 +106,9 @@ async function logout(context: ActionContext) {
 register({commit}, data) {
     return auth_api.register(data);
 }*/
-async function initialize(context: ActionContext) {
-    mutations.setBase();
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
-    if (token) {
-        mutations.LoginSuccess();
-        return true;
-    }
-    return false;
-}
+
 
 export const actions = {
   login: b.dispatch(login),
   logout: b.dispatch(logout),
-  initialize: b.dispatch(initialize)
 }

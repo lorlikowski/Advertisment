@@ -34,6 +34,7 @@ import User from '@/components/User.vue';
 import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import UserList from '@/components/UserList.vue'
 import UserForm from '@/components/UserForm.vue'
+import * as auth_api from '@/api/auth'
 
 export default Vue.extend({
   components: {
@@ -47,10 +48,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      user: {
-        email: "admin@admin.com",
-        is_admin: false
-      },
+      user: {},
       advertisements: [
         {
           title: "Pierwszy",
@@ -69,8 +67,14 @@ export default Vue.extend({
           date_end: '2022-01-25'
         }
       ],
-      users: [1,2,3],
+      users: ["1","2","3"],
     }
+  },
+  async created() {
+    const user = await auth_api.get_user(this.id);
+    this.user = user.data;
+    const advertisements = await auth_api.advertisements(this.id);
+    this.advertisements = advertisements.data;
   }
 })
 </script>

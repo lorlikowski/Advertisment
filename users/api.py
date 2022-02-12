@@ -70,7 +70,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db), Authorize: Aut
 
     access_token = Authorize.create_access_token(subject=db_user.id)
 
-    return {"key": access_token}
+    return {"id": str(db_user.id), "key": access_token}
 
 @app.post("/change_data", response_model=schemas.User)
 def change_data(user: schemas.UserChange, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):

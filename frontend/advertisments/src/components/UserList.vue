@@ -1,34 +1,33 @@
 <template>
   <div>
-    <div v-for="user in users" :key="user">
-      <User :user="getUser(user)" :id="user" />
+    <div v-for="(user, index) in users_data" v-bind:key="`user-${index}`">
+      <User :user="user" :id="users[index]" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import User from "@/components/User.vue"
+import * as auth_api from "@/api/auth"
 
 export default Vue.extend({
   components: {
     User
   },
   props: {
-    users: Array
+    users: Array as PropType<string[]>
   },
   data() {
     return {
-      msg: "Hello",
+      users_data: [{}]
     };
   },
-  methods: {
-    getUser(user: unknown) {
-        let a = user;
-        return {
-        email: "admin@admin.com",
-        is_admin: false
-      }
+  async created() {
+    this.users_data.pop();
+    for(const user of this.users) {
+      const response = await auth_api.get_user(user);
+      this.users_data.push(response.data);
     }
   }
 });

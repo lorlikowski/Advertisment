@@ -11,4 +11,26 @@ const session = axios.create({
     timeout: 15000
 })
 
-export default session;
+const ads = axios.create({
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+    baseURL: 'http://localhost:8001',
+    timeout: 15000
+})
+
+const relation = axios.create({
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+    baseURL: 'http://localhost:8003',
+    timeout: 15000
+})
+
+export {
+    session,
+    ads,
+    relation
+}

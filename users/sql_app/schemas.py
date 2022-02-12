@@ -17,8 +17,11 @@ class UserChange(UserCreate):
     password1: str
     is_admin: Optional[bool]
 
-class UserPublic(BaseModel):
+class UserPublic(UserBase):
     is_admin: bool
+
+    class Config:
+        orm_mode = True
 
 class UserLogin(UserBase):
 

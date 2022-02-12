@@ -11,7 +11,7 @@
         <b-form-input
           id="input-1"
           v-model="form.new_password"
-          type="new_password"
+          type="password"
           placeholder="Enter new password"
           required
         ></b-form-input>
@@ -21,6 +21,7 @@
         <b-form-input
           id="input-2"
           v-model="form.new_password1"
+          type="password"
           placeholder="Enter new password"
           required
         ></b-form-input>
