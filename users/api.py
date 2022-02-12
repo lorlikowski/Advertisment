@@ -7,10 +7,26 @@ from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from pydantic import BaseModel
 import utils
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -54,7 +70,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db), Authorize: Aut
 
     access_token = Authorize.create_access_token(subject=db_user.id)
 
-    return {"key": access_token}
+    return {"id": str(db_user.id), "key": access_token}
 
 @app.post("/change_data", response_model=schemas.User)
 def change_data(user: schemas.UserChange, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
