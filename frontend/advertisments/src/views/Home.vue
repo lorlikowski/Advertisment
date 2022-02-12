@@ -33,6 +33,14 @@ export default Vue.extend({
           views: 23,
           date_start: '2022-01-10',
           date_end: '2022-01-25'
+        },
+        {
+          title: "Trzecie",
+          owner: "2",
+          description: "Trzecie ogłoszenie",
+          views: 23,
+          date_start: '2022-01-22',
+          date_end: '2022-01-25'
         }
       ]
     }

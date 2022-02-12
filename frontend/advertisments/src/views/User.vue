@@ -11,7 +11,7 @@
     <br>
     <br>  
     <h3>Ogłoszenia użytkownika</h3>
-    <AdvertisementsList :advertisements="advertisements"/>
+    <AdvertisementsList :advertisements="advertisements" :edit="true"/>
     </b-container>
     <b-container fluid="md">
     <br>
@@ -53,6 +53,7 @@ export default Vue.extend({
       },
       advertisements: [
         {
+          id: 1,
           title: "Pierwszy",
           owner: "1",
           description: "Pierwsze ogłoszenie na platformie",
@@ -61,6 +62,7 @@ export default Vue.extend({
           date_end: '2022-01-25'
         },
         {
+          id: 2,
           title: "Toster",
           owner: "2",
           description: "Nowiutki toster o krótkim czasie zapiekania i dużej mocy",

@@ -2,7 +2,7 @@
   <b-container fluid="md">
     <br>
     <br>
-    <b-form @submit="onSubmit" v-if="show">
+    <b-form @submit.prevent="onSubmit" v-if="show">
       <b-form-group
         id="input-group-1"
         label="Email:"
@@ -13,6 +13,7 @@
           v-model="form.email"
           type="email"
           placeholder="Enter email"
+          autocomplete="email"
           required
         ></b-form-input>
       </b-form-group>
@@ -23,6 +24,7 @@
           v-model="form.password"
           type="password"
           placeholder="Enter password"
+          autocomplete="new-password"
           required
         ></b-form-input>
       </b-form-group>
@@ -33,6 +35,7 @@
           v-model="form.password1"
           type="password"
           placeholder="Enter password"
+          autocomplete="new-password"
           required
         ></b-form-input>
       </b-form-group>
@@ -56,8 +59,7 @@ import Vue from "vue";
       }
     },
     methods: {
-      onSubmit(event: Event) {
-        event.preventDefault()
+      onSubmit() {
         alert(JSON.stringify(this.form))
       },
     }

@@ -2,7 +2,7 @@
   <b-container fluid="md">
     <br>
     <br>
-    <b-form @submit="onSubmit" v-if="show">
+    <b-form @submit.prevent="onSubmit" v-if="show">
       <b-form-group
         id="input-group-1"
         label="Nowe hasło:"
@@ -44,8 +44,7 @@ import Vue from "vue";
       }
     },
     methods: {
-      onSubmit(event: Event) {
-        event.preventDefault()
+      onSubmit() {
         alert(JSON.stringify(this.form))
       },
     }
