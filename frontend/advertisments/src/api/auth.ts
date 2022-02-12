@@ -16,3 +16,7 @@ export function advertisements(id: string) {
 export function following(type: string, id: string) {
     return relation.get("following/" + type + "/" + id);
 }
+
+export function get_advertisement(id: number) {
+    return ads.get("/advertisements/" + id.toString());
+}

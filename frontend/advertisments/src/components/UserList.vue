@@ -26,8 +26,15 @@ export default Vue.extend({
   async created() {
     this.users_data.pop();
     for(const user of this.users) {
-      const response = await auth_api.get_user(user);
-      this.users_data.push(response.data);
+      if (user == "")
+        continue;
+      try {
+        const response = await auth_api.get_user(user);
+        this.users_data.push(response.data);
+      }
+      catch(ignore) {
+        continue;
+      }
     }
   }
 });
