@@ -41,11 +41,16 @@
       </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
     </b-form>
+    <center>
+      <p v-if="success" style="color:green">Rejestracja przebiegła pomyślnie</p>
+      <p v-if="error" style="color:red">Podano błędne dane</p>
+    </center>
   </b-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import * as auth_store from '@/store/modules/auth'
 
   export default Vue.extend({
     data() {
@@ -55,12 +60,15 @@ import Vue from "vue";
           password: '',
           password1: '',
         },
-        show: true
+        show: true,
+        success: false,
+        error: false
       }
     },
     methods: {
-      onSubmit() {
-        alert(JSON.stringify(this.form))
+      async onSubmit() {
+        this.success = await auth_store.actions.register(this.form);
+        this.error = !this.success;
       },
     }
   })
