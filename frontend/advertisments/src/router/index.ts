@@ -35,6 +35,19 @@ const routes: Array<RouteConfig> = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue')
+  },
+  {
+    path: '/create',
+    name: 'Create',
+    component: () => import('../views/AdvertisementEditorView.vue')
+  },
+  {
+    path: '/edit/:id/',
+    name: 'Edit',
+    props: route => ({
+      id: route.params.id
+    }),
+    component: () => import('../views/AdvertisementEditorView.vue')
   }
 ]
 
