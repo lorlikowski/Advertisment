@@ -14,6 +14,7 @@ class AdvertisementModel(AdvertisementBase):
     id: int
     category: Optional[str]
     views: int
+    owner: int
 
     class Config:
         orm_mode = True
