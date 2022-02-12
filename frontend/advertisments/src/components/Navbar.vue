@@ -1,10 +1,17 @@
 <template>
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link :to="myProfile" v-if="authenticated">Mój profil</router-link> 
-      <router-link to="/login" v-if="!authenticated"> Zaloguj się</router-link>
+  <b-navbar sticky variant="light">
+    <b-navbar-nav>
+      <b-nav-item :to="{name: 'Home'}">Ogłoszenia</b-nav-item>
+      <b-nav-item :to="{name: 'Create'}" v-if="authenticated">Dodaj ogłoszenie</b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-nav class="ml-auto" v-if="!authenticated">
+      <b-nav-item :to="{name: 'Login'}">Zaloguj się</b-nav-item>
+      <b-nav-item :to="{name: 'User', params: {id: myProfile}}">Mój profil</b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-nav>
       <b-button v-on:click="logout()" v-if="authenticated" variant="success"> Wyloguj </b-button>
-    </div>
+    </b-navbar-nav>  
+  </b-navbar>
 </template>
 
 <script lang="ts">
@@ -17,7 +24,7 @@ import * as authStore from "@/store/modules/auth"
           return authStore.getters.isAuthenticated();
         },
         myProfile() {
-          return "/users/" + authStore.getters.authUser();
+          return authStore.getters.authUser();
         }
     },
     methods: {

@@ -11,7 +11,7 @@
     <br>
     <br>  
     <h3>Ogłoszenia użytkownika</h3>
-    <AdvertisementsList :advertisements="advertisements" :key="advertisementlist"/>
+    <AdvertisementsList :advertisements="advertisements" :edit="true" :key="advertisementlist"/>
     </b-container>
     <b-container fluid="md">
     <br>
