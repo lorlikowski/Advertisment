@@ -50,22 +50,19 @@ sub vcl_init {
 
 
 sub vcl_recv {
-  if (req.url ~ "^/users/") {
-    set req.url = regsub(req.url,"^/users", "");
+  if (req.url ~ "^/register" || req.url ~ "^/login" || req.url ~ "^/public" || req.url ~ "^/mail" || req.url ~ "^/change") {
     set req.backend_hint = user.backend();
   }
-  elseif (req.url ~ "^/relations/") {
-    set req.url = regsub(req.url,"^/relations", "");
+  elseif (req.url ~ "^/add" || req.url ~ "^/following" || req.url ~ "^/followers") {
     set req.backend_hint = relation.backend();
   }
-  elseif (req.url ~ "^/ads/") {
-    set req.url = regsub(req.url,"^/ads", "");
+  elseif (req.url ~ "^/advertisements" || req.url ~ "^/categories" || req.url ~ "^/users") {
     set req.backend_hint = ads.backend();
   }
 
 
-  if ((req.url ~ "^/public_data/"
-    ) && req.method == "GET") {
+  if ((req.url ~ "^/public_data/" || req.url ~ "^/mail/" || req.url ~ "^/advertisements/" || req.url ~ "^/categories/" || 
+      req.url ~ "^/following/" || req.url ~ "^/followers/" || req.url ~ "^/users/\d") && req.method == "GET") {
     
 
         
@@ -81,8 +78,8 @@ sub vcl_recv {
 
 sub vcl_backend_response {
 
-    if (bereq.url ~ "^/public_data/"
-    ){
+    if (bereq.url ~ "^/public_data/" || bereq.url ~ "^/mail/" || bereq.url ~ "^/advertisements/" || bereq.url ~ "^/categories/" || 
+      bereq.url ~ "^/following/" || bereq.url ~ "^/followers/" || bereq.url ~ "^/users/\d") {
         set beresp.ttl = 30s;
         unset beresp.http.set-cookie;
         unset beresp.http.Pragma;
