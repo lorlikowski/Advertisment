@@ -72,7 +72,7 @@ export default Vue.extend({
     this.user = user.data;
     this.userprofile++;
 
-    const advertisements = await auth_api.advertisements(this.id);
+    const advertisements = await auth_api.my_advertisements();
     this.advertisements = advertisements.data;
     for (let i = 0; i < this.advertisements.length; ++i)
       Object.assign(this.advertisements[i], {"owner" : this.id});

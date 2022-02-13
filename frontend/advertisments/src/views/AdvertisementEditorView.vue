@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container fluid="md">
-      <advertisement-editor @advertisement-saved="onAdvertisementSaved" />
+      <advertisement-editor :data="data" @advertisement-saved="onAdvertisementSaved" />
     </b-container>
   </div>
 </template>
@@ -23,7 +23,12 @@ export default Vue.extend({
   },
   data() {
     return {
+      loading: true,
+      data: null
     }
+  },
+  created() {
+    this.loadEditor();
   },
   methods: {
     onAdvertisementSaved(savedAdvertisement: AdvertisementFillableData) {
@@ -33,7 +38,21 @@ export default Vue.extend({
       else {
         auth_api.createAdvertisement(savedAdvertisement);
       }
+    },
+    async loadEditor() {
+      if (this.id == null) {
+        this.data = null
+      }
+      else {
+        const [advertisement, content] = await Promise.all([auth_api.get_advertisement(this.id), auth_api.get_advertisement_content(this.id)]);
+
+        const data = advertisement.data;
+        this.data = new AdvertisementFillableData(data.title, data.description, data.category, data.date_start, data.date_end, content.data.content);
+      }
     }
+  },
+  watch: {
+    id: 'loadEditor'
   }
 })
 </script>

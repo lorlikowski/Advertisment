@@ -4,3 +4,4 @@ fastapi_jwt_auth
 bcrypt
 psycopg2-binary
 fastapi-jwt-auth[asymmetric]
+factory_boy

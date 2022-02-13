@@ -31,6 +31,11 @@ export function advertisements(id: string) {
     return session.get("users/"+ id + "/advertisements");
 }
 
+export function my_advertisements() {
+    return ads.get("users/me/advertisements");
+    
+}
+
 export function following(type: string, id: string) {
     return session.get("following/" + type + "/" + id);
 }
