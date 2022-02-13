@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-row align-h="center">
+    <b-row>
       <b-card-group class="col-10 col-md-6 col-lg-4 cards" v-for="advertisement in advertisements" :key="advertisement.id">
         <advertisement :data="advertisement" :edit="edit" :follow="follow"/>
       </b-card-group>

@@ -1,21 +1,21 @@
 <template>
   <b-container fluid>
     <div class="content">
-      <h3 v-if="category">Ogłoszenia w: {{category}}</h3>
+      <h3 v-if="category">Ogłoszenia w: {{category}} <span v-if="categoryObject">(Aktywnych: {{categoryObject.advertisements_count_active}}, archiwalnych: {{categoryObject.advertisements_count_archive}})</span></h3>
       <h3 v-else>Kategorie ogłoszeń</h3>
-    <b-row align-h="around">
+    <b-row align-h="center">
       <b-col>
         <b-button v-b-toggle.collapse-3 class="m-1">Pokaż podkategorie</b-button>
-        <b-link v-if="parentCategory" :to="{name: 'Category', params: {category: parentCategory}}">Powrót do: {{parentCategory}}</b-link>
+        <b-link v-if="categoryObject && categoryObject.parent" :to="{name: 'Category', params: {category: categoryObject.parent}}">Powrót do: {{categoryObject.parent}}</b-link>
       </b-col>
       <b-col cols="12" md="10">
       <b-collapse visible id="collapse-3">
         <b-list-group>
-          <b-list-group-item v-for="subcategory in subcategories" :key="subcategory.name" :to="{name: 'Category', params: {category: subcategory.name, perPage: perPage}}">{{subcategory.name}}</b-list-group-item>
+          <b-list-group-item v-for="subcategory in subcategories" :key="subcategory.name" :to="{name: 'Category', params: {category: subcategory.name}, query: {perPage: perPage}}">{{subcategory.name}}</b-list-group-item>
         </b-list-group>
       </b-collapse>
       <div class="overflower-base">
-        <AdvertisementsList :advertisements="advertisements"/>
+        <AdvertisementsList :advertisements="advertisements" :follow="authenticated"/>
       </div>
       </b-col>
       <b-col>
@@ -24,7 +24,7 @@
     </div>
     <b-pagination v-if="pagination_page"
         v-model="pagination_page"
-        total-rows="100"
+        :total-rows="advertisementsCount"
         :per-page="perPage"
         first-number
         last-number
@@ -38,6 +38,8 @@
 import Vue from 'vue';
 import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import * as auth_api from '@/api/auth'
+import * as authStore from "@/store/modules/auth"
+
 
 export default Vue.extend({
   components: {
@@ -51,7 +53,7 @@ export default Vue.extend({
     },
     perPage: {
       type: Number,
-      default: 25
+      default: 12
     }
   },
   data() {
@@ -96,17 +98,23 @@ export default Vue.extend({
     }
   },
   computed: {
+    authenticated(){
+      return authStore.getters.isAuthenticated();
+    },
     subcategories() {
       const category = this.category || null;
       return this.categories.filter(el => el.parent == category);
     },
-    parentCategory() {
+    categoryObject() {
       const category = this.category;
-      const el = this.categories.find(el => el.name == category);
-      if (el != null) {
-        return el.parent;
+      return this.categories.find(el => el.name == category);
+    },
+    advertisementsCount() {
+      const obj = this.categoryObject;
+      if (!obj) {
+        return 0;
       }
-      return null
+      return obj.advertisements_count_active + obj.advertisements_count_archive;
     }
   }
 })
