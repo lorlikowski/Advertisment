@@ -1,5 +1,7 @@
 import {session, ads, relation} from './session'
 
+import {AdvertisementFillableData} from '@/store/types/advertisement'
+
 interface data {
     email: string;
     password: string;
@@ -49,6 +51,10 @@ export function get_popular_advertisements_in_category(category: string, page: n
     return ads.get(`/categories/${category}/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
 }
 
+export function get_popular_advertisements(page: number, perPage: number) {
+    return ads.get(`/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
+}
+
 export function get_categories(){
     return ads.get('/categories');
 }
@@ -59,4 +65,8 @@ export function register(data: data) {
 
 export function change(publicData: publicData,  data: changeData) {
     return session.post("/change_data", {"email": publicData.email, "password": data.password, "password1": data.password1, "is_admin": publicData.is_admin})
+}
+
+export function createAdvertisement(advertisement: AdvertisementFillableData) {
+    return ads.post("/users/me/advertisements/", advertisement);
 }
