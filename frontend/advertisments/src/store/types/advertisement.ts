@@ -61,3 +61,14 @@ export class AdvertisementFillableData {
         }
     }
 }
+
+export interface AdvertisementSearch {
+    ordering: string | null,
+    limit: number | null,
+    skip: number | null,
+    title__contains: string | null,
+    date_start__lt: Date | null,
+    date_start__gt: Date | null,
+    date_end__lt: Date | null;
+    date_end__gt: Date | null;
+}

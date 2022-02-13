@@ -1,6 +1,6 @@
 import session from './session'
 
-import {AdvertisementFillableData} from '@/store/types/advertisement'
+import {AdvertisementFillableData, AdvertisementSearch} from '@/store/types/advertisement'
 
 interface data {
     email: string;
@@ -82,4 +82,15 @@ export function createAdvertisement(advertisement: AdvertisementFillableData) {
 
 export function updateAdvertisement(advertisement_id: number, advertisement: AdvertisementFillableData) {
     return session.put(`/advertisements/${advertisement_id}/`, advertisement);
+}
+
+export function searchAdvertisements(form: AdvertisementSearch) {
+    const obj = {};
+    for (const key in form) {
+        if (form[key] != null) {
+            obj[key] = form[key].toString();
+        }
+    }
+    const searchParams = new URLSearchParams(obj);
+    return session.get(`/advertisements/?${searchParams}`)
 }
