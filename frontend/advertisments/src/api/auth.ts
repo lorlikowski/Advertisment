@@ -65,7 +65,7 @@ export function get_popular_advertisements(page: number, perPage: number) {
 }
 
 export function get_categories(){
-    return session.get('/categories');
+    return session.get('/categories/');
 }
 
 export function register(data: data) {
