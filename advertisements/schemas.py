@@ -14,6 +14,7 @@ class AdvertisementModel(AdvertisementBase):
     id: int
     category: Optional[str]
     views: int
+    owner: int
 
     class Config:
         orm_mode = True
@@ -48,5 +49,7 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryModel(CategoryBase):
+    advertisements_count_active: int
+    advertisements_count_archive: int
     class Config:
         orm_mode = True

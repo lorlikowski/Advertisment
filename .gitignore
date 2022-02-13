@@ -2,3 +2,6 @@
 __pycache__
 *.db
 users/RS512.key
+users/RS512.key.pub
+advertisements/RS512.key.pub
+relations/RS512.key.pub

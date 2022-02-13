@@ -11,14 +11,24 @@
           required
         ></b-form-input>
       </b-form-group>
+      <b-form-group label="Kategoria">
+        <b-form-input
+          type="text"
+          v-model="form.category"
+        ></b-form-input>
+      </b-form-group>
       <b-form-group label="Od kiedy aktywne">
         <b-form-datepicker
           v-model="form.date_start"
           required
         ></b-form-datepicker>
+        <b-form-timepicker v-model="form.time_start" locale="pl" required>
+        </b-form-timepicker>
       </b-form-group>
       <b-form-group label="Do kiedy aktywne">
         <b-form-datepicker v-model="form.date_end" required></b-form-datepicker>
+        <b-form-timepicker v-model="form.time_end" locale="pl" required>
+        </b-form-timepicker>
       </b-form-group>
       <b-form-group label="Treść ogłoszenia">
         <vue-editor v-model="form.content"></vue-editor>
@@ -35,6 +45,15 @@ import { AdvertisementFillableData } from "@/store/types/advertisement";
 
 import { VueEditor } from "vue2-editor";
 
+function to_DateTime(date: string, time: string) {
+  return new Date(date + ' ' + time);
+}
+
+function extractDate(date: Date) {
+  const ISO = date.toISOString();
+  return ISO.substring(0, ISO.lastIndexOf('T'));
+}
+
 export default Vue.extend({
   components: {
     VueEditor,
@@ -43,13 +62,18 @@ export default Vue.extend({
     data: Object as PropType<AdvertisementFillableData>,
   },
   data() {
+    const dt = new Date();
+
     return {
       form: {
         title: "",
         description: "",
         content: "",
-        date_start: new Date(),
-        date_end: new Date(),
+        category: null,
+        date_start: extractDate(dt),
+        date_end: extractDate(dt),
+        time_start: `${dt.getUTCHours()}:${dt.getUTCMinutes()}`,
+        time_end: `${dt.getUTCHours()}:${dt.getUTCMinutes()}`
       },
     };
   },
@@ -60,8 +84,9 @@ export default Vue.extend({
         new AdvertisementFillableData(
           this.form.title,
           this.form.description,
-          this.form.date_start,
-          this.form.date_end,
+          this.form.category,
+          to_DateTime(this.form.date_start, this.form.time_start),
+          to_DateTime(this.form.date_end, this.form.time_end),
           this.form.content
         )
       );

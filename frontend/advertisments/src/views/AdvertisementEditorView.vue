@@ -10,6 +10,8 @@
 import Vue from 'vue';
 import AdvertisementEditor from '@/components/AdvertisementEditor.vue';
 import { AdvertisementFillableData } from "@/store/types/advertisement";
+import * as auth_api from '@/api/auth'
+
 
 
 export default Vue.extend({
@@ -25,12 +27,12 @@ export default Vue.extend({
   },
   methods: {
     onAdvertisementSaved(savedAdvertisement: AdvertisementFillableData) {
-      alert(JSON.stringify(savedAdvertisement));
-    }
-  },
-  created() {
-    if (this.id) {
-      alert(this.id);
+      if (this.id) {
+        alert(JSON.stringify(savedAdvertisement));
+      }
+      else {
+        auth_api.createAdvertisement(savedAdvertisement);
+      }
     }
   }
 })
