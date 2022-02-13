@@ -99,13 +99,13 @@ export default Vue.extend({
 
     if(this.isAuthenticated) {
       const following = auth_api.following("user", this.authUser);
-      const advertisements = auth_api.my_advertisements();
+      const advertisements = (this.authUser == this.id) ? await auth_api.my_advertisements() : await auth_api.advertisements(this.id);
       const res = await Promise.all([following, advertisements]);
       this.following = res[0].data;
       this.advertisements = res[1].data;
     }
     else {
-      const advertisements = (this.authUser == this.id) ? await auth_api.my_advertisements() : await auth_api.advertisements(this.id);
+      const advertisements = await auth_api.advertisements(this.id);
       this.advertisements = advertisements.data;
     }
     
