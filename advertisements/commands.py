@@ -30,8 +30,8 @@ def create_advertisements(
 
         AdvertisementFactory.create_batch(
             NUM_ADVERTISEMENTS,
-            available_user_ids=list(range(1, available_users + 1)),
-            available_category_ids=list(range(1, available_categories + 1)),
+            available_user_ids=list(range(1, available_users)),
+            available_category_ids=list(range(1, available_categories)),
             date_min=dt - timedelta(days=5),
             date_max=dt + timedelta(days=10),
         )
