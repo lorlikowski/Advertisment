@@ -50,9 +50,12 @@ function LoginError(state: AuthState) {
 }
 
 function Logout(state: AuthState) {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem("id");
     state.authenticated = false;
     state.error = false;
     state.user = null;
+    session.defaults.headers.common['Authorization'] = 'Bearer ';
 }
 
 function setBase(state: AuthState) {
@@ -80,6 +83,7 @@ async function login(context: ActionContext, payload: { username: string; passwo
     const response = await auth_api.login(username, password);
     localStorage.setItem(TOKEN_STORAGE_KEY, response.data.key);
     session.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.key;
+    localStorage.setItem("id", response.data.id);
     mutations.LoginSuccess(response.data.id);
     }
     catch(error) {
@@ -91,6 +95,18 @@ async function login(context: ActionContext, payload: { username: string; passwo
 
 async function logout(context: ActionContext) {
     mutations.Logout();
+}
+
+async function initialize(context: ActionContext) {
+    mutations.setBase()
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    const id = localStorage.getItem("id");
+    if (token && id) {
+        session.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+        mutations.LoginSuccess(id);
+        return true;
+    }
+    return false;
 }
 
 
@@ -143,5 +159,6 @@ export const actions = {
   login: b.dispatch(login),
   logout: b.dispatch(logout),
   register: b.dispatch(register),
-  change: b.dispatch(change)
+  change: b.dispatch(change),
+  initialize: b.dispatch(initialize)
 }
