@@ -19,6 +19,7 @@ PASSWORD = os.environ.get("PASSWORD")
 
 
 def get_followers(id: int, type: str):
+    print(RELATIONS_SERVICE_HOST_URL)
     r = httpx.get(RELATIONS_SERVICE_HOST_URL + 'followers/'+ type +"/" + str(id))
     return r.json()
 

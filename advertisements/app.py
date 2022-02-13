@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from urllib import request
 from pydantic import BaseSettings
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -10,8 +11,13 @@ from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import requests
 
 models.Base.metadata.create_all(bind=engine)
+
+NOTIFICATIONS_SERVICE_HOST_URL=os.environ.get("NOTIFICATIONS_SERVICE_HOST_URL")
+
 
 app = FastAPI()
 
@@ -70,6 +76,12 @@ def create_advertisement(
     # raise HTTPException(status_code=400, detail="No permission to create advertisement") #TODO: check exception type
 
     advertisement = crud.create_advertisement(db, advertisement, user=user_id)
+    response = requests.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', json={
+        "advertisement_id": int(advertisement.id),
+        "owner_id": int(user_id),
+        "type": "create"
+    })
+    print(response.json())
     return crud.serialize_advertisement(advertisement)
 
 
@@ -214,6 +226,11 @@ def update_advertisement(
         raise HTTPException(status_code=404, detail="Advertisement not found")
 
     advertisement = crud.update_advertisement(db, advertisement, advertisement_update)
+    httpx.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', data={
+        "advertisement_id": int(advertisement.id),
+        "owner_id": int(current_user),
+        "type": "update"
+    })
     return crud.serialize_advertisement(advertisement)
 
 
