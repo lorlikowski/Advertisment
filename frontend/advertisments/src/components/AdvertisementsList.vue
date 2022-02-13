@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-row>
-      <b-card-group class="col-10 col-md-6 col-lg-4" v-for="advertisement in advertisements" :key="advertisement.id">
-        <advertisement :data="advertisement" :edit="edit"/>
+    <b-row align-h="center">
+      <b-card-group class="col-10 col-md-6 col-lg-4 cards" v-for="advertisement in advertisements" :key="advertisement.id">
+        <advertisement :data="advertisement" :edit="edit" :follow="follow"/>
       </b-card-group>
     </b-row>
   </div>
@@ -19,7 +19,8 @@ export default Vue.extend({
   },
   props: {
     advertisements:  Array,
-    edit: Boolean
+    edit: Boolean,
+    follow: Boolean
   },
   data() {
     return {
@@ -44,4 +45,7 @@ export default Vue.extend({
 // a {
 //   color: #42b983;
 // }
+.cards {
+  margin-bottom: 15px;
+}
 </style>

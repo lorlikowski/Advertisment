@@ -1,6 +1,7 @@
 <template>
     <b-card :title="data.title">
         <b-card-text>
+        <div><b-link :to="{name: 'AdvertisementView', params: {advertisement_id: data.id}, query: {backlink: $route.fullPath}}">Zobacz</b-link></div>
         {{data.description}}
         </b-card-text>
         <template #footer>
@@ -23,7 +24,7 @@
                 </div>
             </div>
             <div>
-                <b-button variant="outline-danger">
+                <b-button v-if="follow" variant="outline-danger">
                 <b-icon icon="bell-fill"></b-icon>
                 </b-button>
                 <b-avatar :to="{name: 'User', params:{id: data.owner}}"></b-avatar>
@@ -47,15 +48,13 @@ import { Advertisement } from "@/store/types/advertisement"
 export default Vue.extend({
   props: {
       data: Object as PropType<Advertisement>,
-      edit: Boolean
+      edit: Boolean,
+      follow: Boolean
   },
   data() {
     return {
 
     };
-  },
-  created() {
-      console.log(this.data);
   }
 });
 </script>

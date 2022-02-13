@@ -10,6 +10,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import AdvertisementsList from '@/components/AdvertisementsList.vue';
+import * as auth_api from '@/api/auth'
 
 export default Vue.extend({
   components: {
@@ -17,33 +18,12 @@ export default Vue.extend({
   },
   data() {
     return {
-      advertisements: [
-        {
-          title: "Pierwszy",
-          owner: "1",
-          description: "Pierwsze ogłoszenie na platformie",
-          views: 10,
-          date_start: '2022-01-10',
-          date_end: '2022-01-25'
-        },
-        {
-          title: "Toster",
-          owner: "2",
-          description: "Nowiutki toster o krótkim czasie zapiekania i dużej mocy",
-          views: 23,
-          date_start: '2022-01-10',
-          date_end: '2022-01-25'
-        },
-        {
-          title: "Trzecie",
-          owner: "2",
-          description: "Trzecie ogłoszenie",
-          views: 23,
-          date_start: '2022-01-22',
-          date_end: '2022-01-25'
-        }
-      ]
+      advertisements: []
     }
+  },
+  async created() {
+    const advertisements = await auth_api.get_popular_advertisements_in_category("1", 1, 25);
+    this.advertisements = advertisements.data;
   }
 })
 </script>

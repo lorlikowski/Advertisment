@@ -37,6 +37,22 @@ export function get_advertisement(id: number) {
     return ads.get("/advertisements/" + id.toString());
 }
 
+export function get_advertisement_content(id: number) {
+    return ads.get(`/advertisements/${id}/content`);
+}
+
+export function update_advertisement_views(id: number) {
+    return ads.post(`/advertisements/${id}/update_views`);
+}
+
+export function get_popular_advertisements_in_category(category: string, page: number, perPage: number) {
+    return ads.get(`/categories/${category}/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
+}
+
+export function get_categories(){
+    return ads.get('/categories');
+}
+
 export function register(data: data) {
     return session.post("/register", {"email": data.email, "password": data.password, "is_admin": false})
 }

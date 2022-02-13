@@ -48,7 +48,35 @@ const routes: Array<RouteConfig> = [
       id: route.params.id
     }),
     component: () => import('../views/AdvertisementEditorView.vue')
-  }
+  },
+  {
+    path: '/category/',
+    props: route => ({
+      page: route.query.page,
+      perPage: route.query.perPage
+    }),
+    name: 'RootCategory',
+    component: () => import('@/views/Category.vue')
+  },
+  {
+    path: '/category/:category/',
+    props: route => ({
+      category: route.params.category,
+      page: route.query.page,
+      perPage: route.query.perPage
+    }),
+    name: 'Category',
+    component: () => import('@/views/Category.vue')
+  },
+  {
+    path: '/advertisement/:advertisement_id/',
+    props: route => ({
+      advertisement_id: route.params.advertisement_id,
+      backlink: route.query.backlink
+    }),
+    name: 'AdvertisementView',
+    component: () => import('@/views/AdvertisementView.vue')
+  },
 ]
 
 const router = new VueRouter({
