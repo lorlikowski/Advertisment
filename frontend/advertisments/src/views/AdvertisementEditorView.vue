@@ -33,7 +33,7 @@ export default Vue.extend({
   methods: {
     onAdvertisementSaved(savedAdvertisement: AdvertisementFillableData) {
       if (this.id) {
-        alert(JSON.stringify(savedAdvertisement));
+        auth_api.updateAdvertisement(this.id, savedAdvertisement);
       }
       else {
         auth_api.createAdvertisement(savedAdvertisement);

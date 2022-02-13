@@ -32,7 +32,7 @@ export function advertisements(id: string) {
 }
 
 export function my_advertisements() {
-    return ads.get("users/me/advertisements");
+    return session.get("users/me/advertisements/");
     
 }
 
@@ -41,7 +41,7 @@ export function following(type: string, id: string) {
 }
 
 export function get_advertisement(id: number) {
-    return session.get("/advertisements/" + id.toString());
+    return session.get(`/advertisements/${id}/`);
 }
 
 export function get_advertisement_content(id: number) {
@@ -74,4 +74,8 @@ export function change(publicData: publicData,  data: changeData) {
 
 export function createAdvertisement(advertisement: AdvertisementFillableData) {
     return session.post("/users/me/advertisements/", advertisement);
+}
+
+export function updateAdvertisement(advertisement_id: number, advertisement: AdvertisementFillableData) {
+    return session.put(`/advertisements/${advertisement_id}/`, advertisement);
 }
