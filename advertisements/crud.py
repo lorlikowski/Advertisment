@@ -167,18 +167,65 @@ def increment_advertisement_view_count(
     db.refresh(advertisement)
     return advertisement
 
+def get_popular_advertisements(
+    db: Session,
+    limit: int,
+    offset: int = 0,
+    only_visible: bool = True,
+):
+    query = db.query(models.Advertisement)
+    if only_visible:
+        date = datetime.now()
+        query = query.filter(models.Advertisement.date_start <= date)
+
+    return (
+        query.order_by(models.Advertisement.views.desc(), models.Advertisement.id)
+        .offset(offset)
+        .limit(limit)
+    )
+
 
 def get_categories(db: Session):
     return db.query(models.Category).all()
 
 
 def get_popular_advertisements_in_category(
-    db: Session, category: models.Category, limit: int, offset: int = 0
+    db: Session,
+    category: models.Category,
+    limit: int,
+    offset: int = 0,
+    only_visible: bool = True,
 ):
+    query = db.query(models.Advertisement).filter(
+        models.Advertisement.category_id == category.id
+    )
+    if only_visible:
+        date = datetime.now()
+        query = query.filter(models.Advertisement.date_start <= date)
+
     return (
-        db.query(models.Advertisement)
-        .filter(models.Advertisement.category_id == category.id)
-        .order_by(models.Advertisement.views.desc(), models.Advertisement.id)
+        query.order_by(models.Advertisement.views.desc(), models.Advertisement.id)
+        .offset(offset)
+        .limit(limit)
+    )
+
+
+def get_advertisements_in_category(
+    db: Session,
+    category: models.Category,
+    limit: int,
+    offset: int = 0,
+    only_visible: bool = True,
+):
+    query = db.query(models.Advertisement).filter(
+        models.Advertisement.category_id == category.id
+    )
+    if only_visible:
+        date = datetime.now()
+        query = query.filter(models.Advertisement.date_start <= date)
+
+    return (
+        query.order_by(models.Advertisement.date_start.desc(), models.Advertisement.id)
         .offset(offset)
         .limit(limit)
     )
