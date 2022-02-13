@@ -39,6 +39,8 @@ class AdvertisementUpdate(BaseModel):
     title: Optional[str]
     description: Optional[str]
     content: Optional[str]
+    date_start: Optional[datetime]
+    date_end: Optional[datetime]
 
 class CategoryBase(BaseModel):
     name: str
