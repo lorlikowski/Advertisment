@@ -1,7 +1,7 @@
 import { BareActionContext } from "vuex-typex"
 import { storeBuilder, RootState } from "@/store/RootState"
 import * as auth_api from '@/api/auth'
-import { session } from "@/api/session"
+import session from "@/api/session"
 
 
 const TOKEN_STORAGE_KEY = "NOTE"
