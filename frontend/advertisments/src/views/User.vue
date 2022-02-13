@@ -4,26 +4,26 @@
     <b-container fluid="md">
       <!-- <AdvertisementsList :advertisements="advertisements"/> -->
       Użytkownik {{id}} wita na swoim profilu!
-      <User :user="user" :id="id" :key="userprofile"/>
+      <User :user="user" :id="id" :follow="follow" :key="userprofile"/>
     </b-container>
     <UserForm v-if="isAuthenticated && authUser == id"/>
     <b-container fluid="md">
     <br>
     <br>  
     <h3>Ogłoszenia użytkownika</h3>
-    <AdvertisementsList :advertisements="advertisements" :edit="true" :key="advertisementlist"/>
+    <AdvertisementsList :advertisements="advertisements" :edit="true" :follow="false" :key="advertisementlist"/>
     </b-container>
     <b-container fluid="md">
     <br>
     <br>  
     <h3>Obserwowani użytkownicy</h3>
-    <UserList :users="users" :key="userlist"/>
+    <UserList :users="users" :follow="false" :key="userlist"/>
     </b-container>
     <b-container fluid="md">
     <br>
     <br>  
     <h3>Obserwowane ogłoszenia</h3>
-    <AdvertisementsList :advertisements="ads" :key="followads" v-if="followads != 0"/>
+    <AdvertisementsList :advertisements="ads" :follow="false" :key="followads" v-if="followads != 0"/>
     </b-container>
   </div>
 </template>
@@ -53,6 +53,11 @@ export default Vue.extend({
     },
     authUser() {
       return auth_store.getters.authUser();
+    },
+    follow() {
+      if (!this.following)
+        return false;
+      return this.isAuthenticated && this.authUser != this.id && (this.following.filter(el => el.object_id == this.id).length == 0);
     }
   },
   data() {
@@ -64,7 +69,8 @@ export default Vue.extend({
       userlist: 0,
       userprofile: 0,
       advertisementlist: 0,
-      followads: 0
+      followads: 0,
+      following: []
     }
   },
   async created() { //TODO better await
@@ -72,7 +78,13 @@ export default Vue.extend({
     this.user = user.data;
     this.userprofile++;
 
+    if(this.isAuthenticated) {
+      const response = await auth_api.following("user", this.authUser);
+      this.following = response.data;
+    }
+
     const advertisements = await auth_api.my_advertisements();
+    
     this.advertisements = advertisements.data;
     for (let i = 0; i < this.advertisements.length; ++i)
       Object.assign(this.advertisements[i], {"owner" : this.id});
@@ -90,9 +102,8 @@ export default Vue.extend({
     for (const ad of ads.data) {
       this.ads.push((await auth_api.get_advertisement(ad["object_id"])).data)
     }
-    console.log(this.ads);
     this.followads++;
 
-  }
+  },
 })
 </script>

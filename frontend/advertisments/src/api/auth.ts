@@ -93,4 +93,10 @@ export function searchAdvertisements(form: AdvertisementSearch) {
     }
     const searchParams = new URLSearchParams(obj);
     return session.get(`/advertisements/?${searchParams}`)
+export function follow_user(authUser: string, follow: string) {
+    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "user"});
+}
+
+export function follow_advertisement(authUser: string, follow: string) {
+    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "advertisement"});
 }

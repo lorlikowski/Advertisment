@@ -17,8 +17,8 @@
                   </div>
                 </div>
                 <div>
-                  <b-button variant="outline-danger">
-                    Obserwuj
+                  <b-button v-if="follow" variant="outline-danger" v-on:click="follow_user()">
+                  <b-icon icon="bell-fill"></b-icon>
                   </b-button>
                   <b-avatar :to="{name: 'User', params:{id: id}}"></b-avatar>
                 </div>
@@ -32,17 +32,36 @@
 
 <script lang="ts">
 import Vue from "vue";
+import * as api from '@/api/auth'
+import * as store from '@/store/modules/auth'
 
 export default Vue.extend({
   props: {
     user: Object,
-    id: String
+    id: String,
+    follow: Boolean
+  },
+  computed: {
+    authUser() {
+      return store.getters.authUser();
+    }
   },
   data() {
     return {
       msg: "Hello",
     };
   },
+  methods: {
+    async follow_user() {
+      try {
+        const response = await api.follow_user(this.authUser, this.id);
+        this.$router.go(0);
+      }
+      catch(ignore) {
+        return;
+      }
+    }
+  }
 });
 </script>
 
