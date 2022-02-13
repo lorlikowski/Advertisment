@@ -70,3 +70,11 @@ export function change(publicData: publicData,  data: changeData) {
 export function createAdvertisement(advertisement: AdvertisementFillableData) {
     return session.post("/users/me/advertisements/", advertisement);
 }
+
+export function follow_user(authUser: string, follow: string) {
+    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "user"});
+}
+
+export function follow_advertisement(authUser: string, follow: string) {
+    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "advertisement"});
+}

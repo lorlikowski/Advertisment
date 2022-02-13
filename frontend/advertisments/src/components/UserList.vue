@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="(user, index) in users_data" v-bind:key="`user-${index}`">
-      <User :user="user" :id="users[index]" />
+      <User :user="user" :follow="follow" :id="users[index]" />
     </div>
   </div>
 </template>
@@ -16,7 +16,8 @@ export default Vue.extend({
     User
   },
   props: {
-    users: Array as PropType<string[]>
+    users: Array as PropType<string[]>,
+    follow: Boolean
   },
   data() {
     return {

@@ -2,7 +2,7 @@
   <div>
     <b-row>
       <b-card-group class="col-10 col-md-6 col-lg-4 cards" v-for="advertisement in advertisements" :key="advertisement.id">
-        <advertisement :data="advertisement" :edit="edit" :follow="follow"/>
+        <advertisement :data="advertisement" :edit="edit"/>
       </b-card-group>
     </b-row>
   </div>
