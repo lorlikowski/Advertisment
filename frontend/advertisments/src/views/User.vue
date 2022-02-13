@@ -95,14 +95,21 @@ export default Vue.extend({
     this.user = user.data;
     this.userprofile++;
 
-    if(this.isAuthenticated) {
-      const response = await auth_api.following("user", this.authUser);
-      this.following = response.data;
-    }
-
-    const advertisements = (this.authUser == this.id) ? await auth_api.my_advertisements() : await auth_api.advertisements(this.id);
     
-    this.advertisements = advertisements.data;
+
+    if(this.isAuthenticated) {
+      const following = auth_api.following("user", this.authUser);
+      const advertisements = auth_api.advertisements(this.id);
+      const res = await Promise.all([following, advertisements]);
+      this.following = res[0].data;
+      this.advertisements = res[1].data;
+    }
+    else {
+      const advertisements = (this.authUser == this.id) ? await auth_api.my_advertisements() : await auth_api.advertisements(this.id);
+      this.advertisements = advertisements.data;
+    }
+    
+    
     for (let i = 0; i < this.advertisements.length; ++i)
       Object.assign(this.advertisements[i], {"owner" : this.id});
 
