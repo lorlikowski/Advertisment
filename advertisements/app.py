@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List, Optional
-from urllib import request
 from pydantic import BaseSettings
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -226,7 +225,7 @@ def update_advertisement(
         raise HTTPException(status_code=404, detail="Advertisement not found")
 
     advertisement = crud.update_advertisement(db, advertisement, advertisement_update)
-    httpx.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', data={
+    requests.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', json={
         "advertisement_id": int(advertisement.id),
         "owner_id": int(current_user),
         "type": "update"
