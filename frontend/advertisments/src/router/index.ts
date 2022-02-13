@@ -8,6 +8,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
+    props: route => ({
+      page: route.query.page,
+      perPage: route.query.perPage
+    }),
     component: Home
   },
   {
