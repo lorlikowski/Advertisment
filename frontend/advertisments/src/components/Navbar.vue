@@ -3,6 +3,7 @@
     <b-navbar-nav>
       <b-nav-item :to="{name: 'Home'}">Ogłoszenia</b-nav-item>
       <b-nav-item :to="{name: 'RootCategory'}">Kategorie</b-nav-item>
+      <b-nav-item :to="{name: 'Search'}">Wyszukaj</b-nav-item>
       <b-nav-item :to="{name: 'Create'}" v-if="authenticated">Dodaj ogłoszenie</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto">

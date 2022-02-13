@@ -57,7 +57,8 @@ const routes: Array<RouteConfig> = [
     path: '/category/',
     props: route => ({
       page: route.query.page,
-      perPage: route.query.perPage
+      perPage: route.query.perPage,
+      ordering: route.query.ordering
     }),
     name: 'RootCategory',
     component: () => import('@/views/Category.vue')
@@ -67,7 +68,8 @@ const routes: Array<RouteConfig> = [
     props: route => ({
       category: route.params.category,
       page: route.query.page,
-      perPage: route.query.perPage
+      perPage: route.query.perPage,
+      ordering: route.query.ordering
     }),
     name: 'Category',
     component: () => import('@/views/Category.vue')
@@ -80,6 +82,16 @@ const routes: Array<RouteConfig> = [
     }),
     name: 'AdvertisementView',
     component: () => import('@/views/AdvertisementView.vue')
+  },
+  {
+    path: '/search/',
+    props: route => ({
+      page: route.query.page,
+      perPage: route.query.perPage,
+      ordering: route.query.ordering
+    }),
+    name: 'Search',
+    component: () => import('@/views/Search.vue')
   },
 ]
 
