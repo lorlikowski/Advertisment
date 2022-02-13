@@ -55,7 +55,10 @@ export default Vue.extend({
     async follow_user() {
       try {
         const response = await api.follow_user(this.authUser, this.id);
-        this.$router.go(0);
+        if (response.status == 200)
+          alert("Użytkownik zaobserwowany");
+        else
+          alert("Przepraszamy wystąpił błąd");
       }
       catch(ignore) {
         return;

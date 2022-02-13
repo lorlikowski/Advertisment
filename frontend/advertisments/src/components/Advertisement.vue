@@ -80,7 +80,10 @@ export default Vue.extend({
       async follow_ad() {
       try {
         const response = await auth_api.follow_advertisement(this.authUser, this.data.id);
-        this.$router.go(0);
+        if (response.status == 200)
+          alert("Ogłoszenie zaobserwowane");
+        else
+          alert("Przepraszamy wystąpił błąd, spróbuj później");
       }
       catch(ignore) {
         return;

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
@@ -17,6 +17,15 @@ app = FastAPI()
 class AuthJWTSettings(BaseSettings):
     authjwt_algorithm: str = "RS512"
     authjwt_public_key: str = open("RS512.key.pub", "r").read()
+
+
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+
+@AuthJWT.load_config
+def get_config():
+    return AuthJWTSettings()
 
 origins = [
     "http://localhost:8080",
