@@ -55,6 +55,7 @@ def get_advertisements(
     limit: int,
     offset: int = 0,
     ordering: str = AdvertisementOrdering.VIEWS_DSC,
+    only_visible: bool = True,
     **filters: Dict[str, any],
 ):
     processed_filters = []
@@ -83,6 +84,10 @@ def get_advertisements(
                     )
                 ]
             )
+
+    if only_visible:
+        date = datetime.now()
+        processed_filters.append(models.Advertisement.date_start <= date)
 
     if ordering not in list(AdvertisementOrdering):
         raise RequestValidationError(

@@ -118,13 +118,13 @@ def get_advertisements(
     if title__contains is not None:
         extra_filters["title__contains"] = title__contains
     if date_start__lt is not None:
-        extra_filters["date_start__lt"] = datetime.datetime(date_start__lt)
+        extra_filters["date_start__lt"] = datetime.fromisoformat(date_start__lt)
     if date_start__gt is not None:
-        extra_filters["date_start__gt"] = datetime.datetime(date_start__gt)
+        extra_filters["date_start__gt"] = datetime.fromisoformat(date_start__gt)
     if date_end__lt is not None:
-        extra_filters["date_end__lt"] = datetime.datetime(date_end__lt)
+        extra_filters["date_end__lt"] = datetime.fromisoformat(date_end__lt)
     if date_end__gt is not None:
-        extra_filters["date_end__gt"] = datetime.datetime(date_end__gt)
+        extra_filters["date_end__gt"] = datetime.fromisoformat(date_end__gt)
 
     return [
         crud.serialize_advertisement(advertisement)
