@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_jwt_auth.exceptions import AuthJWTException
+from fastapi_jwt_auth import AuthJWT
+from pydantic import BaseSettings
 
 
 
@@ -10,6 +13,10 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
+class AuthJWTSettings(BaseSettings):
+    authjwt_algorithm: str = "RS512"
+    authjwt_public_key: str = open("RS512.key.pub", "r").read()
 
 origins = [
     "http://localhost:8080",
@@ -32,9 +39,11 @@ def get_db():
 
 
 @app.post("/add", response_model=schemas.Relation)
-def add_relation(relation: schemas.RelationCreate, db: Session = Depends(get_db)):
+def add_relation(relation: schemas.RelationCreate, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    user_id = Authorize.get_jwt_subject()
     db_relation = crud.get_relation(db, relation)
-    if db_relation:
+    if db_relation or user_id != relation.user_id:
         raise HTTPException(status_code=400, detail="Such relation already exists")
     return crud.create_relation(db, relation)
 
