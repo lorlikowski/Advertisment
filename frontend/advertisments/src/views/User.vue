@@ -74,7 +74,24 @@ export default Vue.extend({
     }
   },
   async created() { //TODO better await
-    const user = await auth_api.get_user(this.id);
+    const [user, users, ads] = await Promise.all([
+      auth_api.get_user(this.id),
+      auth_api.following("user", this.id),
+      auth_api.following("advertisement", this.id) 
+    ])
+
+    let calls = []
+    for (const ad of ads.data) {
+      calls.push(auth_api.get_advertisement(ad["object_id"]));
+    }
+
+    const response = await Promise.all(calls);
+    this.ads.pop();
+    for (const res of response) {
+      this.ads.push(res.data);
+    }
+    this.followads++;
+
     this.user = user.data;
     this.userprofile++;
 
@@ -88,21 +105,14 @@ export default Vue.extend({
     this.advertisements = advertisements.data;
     for (let i = 0; i < this.advertisements.length; ++i)
       Object.assign(this.advertisements[i], {"owner" : this.id});
-    this.advertisementlist++;
 
-    const users = await auth_api.following("user", this.id);
     this.users.pop();
     for (const user of users.data) {
       this.users.push(user["object_id"].toString());
     }
     this.userlist++;
 
-    const ads = await auth_api.following("advertisement", this.id);
-    this.ads.pop();
-    for (const ad of ads.data) {
-      this.ads.push((await auth_api.get_advertisement(ad["object_id"])).data)
-    }
-    this.followads++;
+
 
   },
   watch: {
