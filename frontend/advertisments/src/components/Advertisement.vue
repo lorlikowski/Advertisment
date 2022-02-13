@@ -67,7 +67,7 @@ export default Vue.extend({
       follow() {
         if (!this.following)
             return false;
-        return this.isAuthenticated && this.authUser != this.id && (this.following.filter(el => el.object_id == this.data.id).length == 0);
+        return this.isAuthenticated && (this.following.filter(el => el.object_id == this.data.id).length == 0);
     }
   },
   async created() {
