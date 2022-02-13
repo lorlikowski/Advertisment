@@ -1,6 +1,8 @@
-from sqlalchemy import  Column,  Integer, String, UniqueConstraint
+from sqlalchemy import  Column,  Integer, String, UniqueConstraint, Index
+from sqlalchemy.ext.declarative import declarative_base
 
-from .database import Base
+
+Base = declarative_base()
 
 
 
@@ -16,4 +18,9 @@ class Relation(Base):
     type = Column(String, index=True)
     
     UniqueConstraint('user_id', 'object_id', 'type', name='relation')
+
+    __table_args__ = (
+        Index("user_type", "user_id", "type"),
+        Index("object_type", "object_id", "type"),
+    )
 

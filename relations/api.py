@@ -1,15 +1,16 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sql_app import crud, models, schemas
-from sql_app.database import SessionLocal, engine
+from sql_app.database import SessionLocal, engines
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi_jwt_auth import AuthJWT
 from pydantic import BaseSettings
 
 
-
-models.Base.metadata.create_all(bind=engine)
+for db in engines:
+    models.Base.metadata.create_all(db)
 
 app = FastAPI()
 
@@ -17,6 +18,15 @@ app = FastAPI()
 class AuthJWTSettings(BaseSettings):
     authjwt_algorithm: str = "RS512"
     authjwt_public_key: str = open("RS512.key.pub", "r").read()
+
+@AuthJWT.load_config
+def get_config():
+    return AuthJWTSettings()
+
+
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
 
 origins = [
     "http://localhost:8080",
