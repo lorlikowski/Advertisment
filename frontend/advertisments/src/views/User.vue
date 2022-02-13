@@ -83,7 +83,7 @@ export default Vue.extend({
       this.following = response.data;
     }
 
-    const advertisements = await auth_api.my_advertisements();
+    const advertisements = (this.authUser == this.id) ? await auth_api.my_advertisements() : await auth_api.advertisements(this.id);
     
     this.advertisements = advertisements.data;
     for (let i = 0; i < this.advertisements.length; ++i)
@@ -105,5 +105,10 @@ export default Vue.extend({
     this.followads++;
 
   },
+  watch: {
+      id: function reload(old, new_value) {
+      this.$router.go(0);
+    }
+  }
 })
 </script>
