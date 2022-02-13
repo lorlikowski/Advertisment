@@ -58,10 +58,10 @@ export default Vue.extend({
         if (response.status == 200)
           alert("Użytkownik zaobserwowany");
         else
-          alert("Przepraszamy wystąpił błąd");
+          alert("Przepraszamy wystąpił błąd, spróbuj później");
       }
       catch(ignore) {
-        return;
+        alert("Przepraszamy wystąpił błąd, spróbuj później");
       }
     }
   }

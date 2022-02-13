@@ -99,7 +99,7 @@ export default Vue.extend({
 
     if(this.isAuthenticated) {
       const following = auth_api.following("user", this.authUser);
-      const advertisements = auth_api.advertisements(this.id);
+      const advertisements = auth_api.my_advertisements();
       const res = await Promise.all([following, advertisements]);
       this.following = res[0].data;
       this.advertisements = res[1].data;
