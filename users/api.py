@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
@@ -14,6 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+JWT_EXPIRATION = timedelta(days=2)
 
 
 origins = [
@@ -68,7 +71,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(get_db), Authorize: Aut
     if not utils.check_password(user.password, db_user.password):
         raise HTTPException(status_code=400, detail="Bad password")
 
-    access_token = Authorize.create_access_token(subject=db_user.id)
+    access_token = Authorize.create_access_token(subject=db_user.id, expires_time=JWT_EXPIRATION)
 
     return {"id": str(db_user.id), "key": access_token}
 
