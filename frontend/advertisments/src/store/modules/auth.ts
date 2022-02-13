@@ -55,7 +55,7 @@ function Logout(state: AuthState) {
     state.authenticated = false;
     state.error = false;
     state.user = null;
-    session.defaults.headers.common['Authorization'] = 'Bearer ';
+    delete session.defaults.headers.common['Authorization'];
 }
 
 function setBase(state: AuthState) {
