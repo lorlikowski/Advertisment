@@ -47,12 +47,12 @@ import { AdvertisementFillableData } from "@/store/types/advertisement";
 import { VueEditor } from "vue2-editor";
 
 function to_DateTime(date: string, time: string) {
-  return new Date(date + ' ' + time);
+  return new Date(date + " " + time);
 }
 
 function extractDate(date: Date) {
   const ISO = date.toISOString();
-  return ISO.substring(0, ISO.lastIndexOf('T'));
+  return ISO.substring(0, ISO.lastIndexOf("T"));
 }
 
 function extractTime(date: Date) {
@@ -62,15 +62,15 @@ function extractTime(date: Date) {
 function defaultForm() {
   const dt = new Date();
   return {
-        title: "",
-        description: "",
-        content: "",
-        category: null,
-        date_start: extractDate(dt),
-        date_end: extractDate(dt),
-        time_start: extractTime(dt),
-        time_end: extractTime(dt)
-      }
+    title: "",
+    description: "",
+    content: "",
+    category: null,
+    date_start: extractDate(dt),
+    date_end: extractDate(dt),
+    time_start: extractTime(dt),
+    time_end: extractTime(dt),
+  };
 }
 
 export default Vue.extend({
@@ -82,7 +82,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      form: defaultForm()
+      form: defaultForm(),
     };
   },
   created() {
@@ -105,19 +105,18 @@ export default Vue.extend({
     loadData() {
       if (this.data == null) {
         this.form = defaultForm();
-      }
-      else {
+      } else {
         this.form = Object.assign(this.form, this.data);
         this.form.date_start = extractDate(this.data.date_start);
-        this.form.time_start = extractTime(this.data.date_start)
+        this.form.time_start = extractTime(this.data.date_start);
         this.form.date_end = extractDate(this.data.date_end);
         this.form.time_end = extractTime(this.data.date_end);
       }
     },
   },
   watch: {
-    data: 'loadData'
-  }
+    data: "loadData",
+  },
 });
 </script>
 
