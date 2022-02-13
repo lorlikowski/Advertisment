@@ -62,7 +62,7 @@ sub vcl_recv {
 
 
   if ((req.url ~ "^/public_data/" || req.url ~ "^/mail/"|| req.url ~ "^/categories/" || 
-      req.url ~ "^/following/" || req.url ~ "^/followers/") && req.method == "GET") {
+      req.url ~ "^/following/" || req.url ~ "^/followers/" || req.url ~ "^/users/\d" || req.url ~ "^/advertisements/popular") && req.method == "GET") {
     
 
         
@@ -79,14 +79,14 @@ sub vcl_recv {
 sub vcl_backend_response {
 
     if (bereq.url ~ "^/public_data/" || bereq.url ~ "^/mail/"  || bereq.url ~ "^/categories/" || 
-      bereq.url ~ "^/following/" || bereq.url ~ "^/followers/") {
+      bereq.url ~ "^/following/" || bereq.url ~ "^/followers/" || bereq.url ~ "^/users/\d" || bereq.url ~ "^/advertisements/popular") {
         set beresp.ttl = 30s;
         set beresp.http.Cache-Control = "max-age=30";
         unset beresp.http.set-cookie;
         unset beresp.http.Pragma;
         unset beresp.http.Expires;
     }
-    if ( bereq.url ~ "^/advertisements/"|| bereq.url ~ "^/users/") {
+    elseif ( bereq.url ~ "^/advertisements/"|| bereq.url ~ "^/users/") {
         unset beresp.http.Cache-Control;
         set beresp.http.Cache-Control = "private, max-age=30";
         set beresp.ttl = 30s;
