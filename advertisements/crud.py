@@ -152,7 +152,6 @@ def update_advertisement(
     for field, value in update_data.items():
         setattr(db_obj, field, value)
 
-    print(update_data)
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)

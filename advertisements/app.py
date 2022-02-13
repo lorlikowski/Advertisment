@@ -158,7 +158,7 @@ def get_advertisement(
     advertisement_id: int, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()
 ):
     Authorize.jwt_optional()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=current_user is None
@@ -180,14 +180,14 @@ def get_advertisement_content(
     advertisement_id: int, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()
 ):
     Authorize.jwt_optional()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=current_user is None
     )
 
     if advertisement is None or (
-        not advertisement.visible and advertisement.owner != current_user
+        (not advertisement.visible) and advertisement.owner != current_user
     ):
         raise HTTPException(status_code=404, detail="Advertisement not found")
 
@@ -204,7 +204,7 @@ def update_advertisement(
     Authorize: AuthJWT = Depends(),
 ):
     Authorize.jwt_required()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=False
@@ -223,6 +223,9 @@ def update_advertisement(
 )
 def update_advertisement_views(advertisement_id: int, db: Session = Depends(get_db)):
     advertisement = crud.get_advertisement_by_id(db, advertisement_id)
+    if advertisement is None:
+        raise HTTPException(status_code=404, detail="Advertisement not found")
+
     return crud.increment_advertisement_view_count(db, advertisement)
 
 
