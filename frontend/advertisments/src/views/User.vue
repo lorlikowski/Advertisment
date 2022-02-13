@@ -108,10 +108,6 @@ export default Vue.extend({
       const advertisements = await auth_api.advertisements(this.id);
       this.advertisements = advertisements.data;
     }
-    
-    
-    for (let i = 0; i < this.advertisements.length; ++i)
-      Object.assign(this.advertisements[i], {"owner" : this.id});
 
     this.users.pop();
     for (const user of users.data) {
