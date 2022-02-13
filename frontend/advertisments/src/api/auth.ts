@@ -56,6 +56,10 @@ export function get_popular_advertisements_in_category(category: string, page: n
     return session.get(`/categories/${category}/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
 }
 
+export function get_advertisements_in_category(category: string, page: number, perPage: number) {
+    return session.get(`/categories/${category}/advertisements/?limit=${perPage}&skip=${(page-1)*perPage}`)
+}
+
 export function get_popular_advertisements(page: number, perPage: number) {
     return session.get(`/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
 }

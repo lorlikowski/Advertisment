@@ -15,6 +15,7 @@
         <b-form-input
           type="text"
           v-model="form.category"
+          :disabled="data != null"
         ></b-form-input>
       </b-form-group>
       <b-form-group label="Od kiedy aktywne">
@@ -106,7 +107,7 @@ export default Vue.extend({
         this.form = defaultForm();
       }
       else {
-        Object.assign(this.form, this.data);
+        this.form = Object.assign(this.form, this.data);
         this.form.date_start = extractDate(this.data.date_start);
         this.form.time_start = extractTime(this.data.date_start)
         this.form.date_end = extractDate(this.data.date_end);
