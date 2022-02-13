@@ -81,6 +81,7 @@ sub vcl_backend_response {
     if (bereq.url ~ "^/public_data/" || bereq.url ~ "^/mail/" || bereq.url ~ "^/advertisements/" || bereq.url ~ "^/categories/" || 
       bereq.url ~ "^/following/" || bereq.url ~ "^/followers/" || bereq.url ~ "^/users/\d") {
         set beresp.ttl = 30s;
+        set beresp.http.Cache-Control = "max-age=30";
         unset beresp.http.set-cookie;
         unset beresp.http.Pragma;
         unset beresp.http.Expires;
