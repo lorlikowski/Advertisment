@@ -40,6 +40,13 @@ import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import * as auth_api from '@/api/auth'
 import * as authStore from "@/store/modules/auth"
 
+type pagination = number | null;
+
+interface Category {
+  name: string | null,
+  parent: string | null
+}
+
 
 export default Vue.extend({
   components: {
@@ -59,8 +66,8 @@ export default Vue.extend({
   data() {
     return {
       advertisements: [],
-      categories: [],
-      pagination_page: null
+      categories: [] as Array<Category>,
+      pagination_page: null as pagination
     }
   },
   created() {
@@ -93,7 +100,7 @@ export default Vue.extend({
       const categories = await auth_api.get_categories();
       this.categories = categories.data;
     },
-    onPaginationChanged(new_value){
+    onPaginationChanged(new_value: pagination){
       this.$router.push(`?page=${new_value}&perPage=${this.perPage}`)
     }
   },
@@ -101,23 +108,24 @@ export default Vue.extend({
     authenticated(){
       return authStore.getters.isAuthenticated();
     },
-    subcategories() {
+    subcategories() : Category[]{
       const category = this.category || null;
-      return this.categories.filter(el => el.parent == category);
+      return this.categories.filter((el: Category)  => el.parent == category);
     },
-    categoryObject() {
+    categoryObject() : Category | undefined{
       const category = this.category;
-      return this.categories.find(el => el.name == category);
+      return this.categories.find((el: Category) => el.name == category);
     },
     advertisementsCount() {
       const obj = this.categoryObject;
       if (!obj) {
         return 0;
       }
-      return obj.advertisements_count_active + obj.advertisements_count_archive;
+        return obj.advertisements_count_active + obj.advertisements_count_archive;
+      }
     }
   }
-})
+)
 </script>
 
 <style lang="scss" scoped>

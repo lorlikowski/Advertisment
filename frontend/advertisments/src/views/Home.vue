@@ -22,6 +22,9 @@ import AdvertisementsList from '@/components/AdvertisementsList.vue';
 import * as auth_api from '@/api/auth'
 import * as authStore from "@/store/modules/auth"
 
+
+type pagination = number | null;
+
 export default Vue.extend({
   components: {
     AdvertisementsList
@@ -39,7 +42,7 @@ export default Vue.extend({
   data() {
     return {
       advertisements: [],
-      pagination_page: null,
+      pagination_page: null as pagination,
       maxAdvertisements: 240
     }
   },
@@ -52,7 +55,7 @@ export default Vue.extend({
       const advertisements = await auth_api.get_popular_advertisements(this.page, this.perPage);
       this.advertisements = advertisements.data;
     },
-    onPaginationChanged(new_value){
+    onPaginationChanged(new_value: pagination){
       this.$router.push(`?page=${new_value}&perPage=${this.perPage}`)
     }
   },

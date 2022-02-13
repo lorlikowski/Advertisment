@@ -40,23 +40,23 @@ export function get_advertisement(id: number) {
 }
 
 export function get_advertisement_content(id: number) {
-    return ads.get(`/advertisements/${id}/content`);
+    return session.get(`/advertisements/${id}/content`);
 }
 
 export function update_advertisement_views(id: number) {
-    return ads.post(`/advertisements/${id}/update_views`);
+    return session.post(`/advertisements/${id}/update_views`);
 }
 
 export function get_popular_advertisements_in_category(category: string, page: number, perPage: number) {
-    return ads.get(`/categories/${category}/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
+    return session.get(`/categories/${category}/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
 }
 
 export function get_popular_advertisements(page: number, perPage: number) {
-    return ads.get(`/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
+    return session.get(`/advertisements/popular/?limit=${perPage}&skip=${(page-1)*perPage}`)
 }
 
 export function get_categories(){
-    return ads.get('/categories');
+    return session.get('/categories');
 }
 
 export function register(data: data) {
@@ -68,5 +68,5 @@ export function change(publicData: publicData,  data: changeData) {
 }
 
 export function createAdvertisement(advertisement: AdvertisementFillableData) {
-    return ads.post("/users/me/advertisements/", advertisement);
+    return session.post("/users/me/advertisements/", advertisement);
 }
