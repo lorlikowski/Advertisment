@@ -16,6 +16,21 @@ services:
     depends_on:
       - advertisement_db
 
+  advertisementreplica:
+    build: ./advertisements
+    command: uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./advertisements/:/app/
+    ports:
+      - 8011:8000
+    environment:
+      - USERS_SERVICE_HOST_URL=http://users:8000/
+      - RELATIONS_SERVICE_HOST_URL=http://relations:8000/
+      - DATABASE_URI=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db/advertisement_db_dev
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
+    depends_on:
+      - advertisement_db
+
   advertisement_db:
     image: postgres:12.1-alpine
     volumes:
@@ -40,6 +55,36 @@ services:
     depends_on:
       - user_db
 
+  usersreplica:
+    build: ./users
+    command: uvicorn api:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./users/:/app/
+    ports:
+      - 8005:8000
+    environment:
+      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisement:8000/
+      - DATABASE_URI=postgresql://user_db_username:user_db_password@user_db/user_db_dev
+      - RELATIONS_SERVICE_HOST_URL=http://relations:8000/
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
+    depends_on:
+      - user_db 
+
+  varnish:
+    image: varnish
+    volumes:
+      - ./varnish:/etc/varnish
+    expose:
+      - 80
+    ports:
+      - "8012:80"
+    environment:
+      - USERS_SERVICE_HOST_URL=http://users:8000/
+      - USERS1_SERVICE_HOST_URL=http://usersreplica:8000/
+    depends_on:
+      - users
+      - usersreplica
+
   user_db:
     image: postgres:12.1-alpine
     volumes:
@@ -56,6 +101,21 @@ services:
       - ./relations/:/app/
     ports:
       - 8003:8000
+    environment:
+      - DATABASE_URI=postgresql://relation_db_username:relation_db_password@relation_db/relation_db_dev
+      - USERS_SERVICE_HOST_URL=http://users:8000/
+      - ADVERTISEMENTS_SERVICE_HOST_URL=http://advertisement:8000/
+      - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
+    depends_on:
+      - relation_db
+
+  relationsreplica:
+    build: ./relations
+    command: uvicorn api:app --reload --host 0.0.0.0 --port 8000
+    volumes:
+      - ./relations/:/app/
+    ports:
+      - 8010:8000
     environment:
       - DATABASE_URI=postgresql://relation_db_username:relation_db_password@relation_db/relation_db_dev
       - USERS_SERVICE_HOST_URL=http://users:8000/

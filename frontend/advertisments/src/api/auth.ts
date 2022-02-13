@@ -1,4 +1,4 @@
-import {session, ads, relation} from './session'
+import session from './session'
 
 interface data {
     email: string;
@@ -26,15 +26,15 @@ export function get_user(id: string) {
 }
 
 export function advertisements(id: string) {
-    return ads.get("users/"+ id + "/advertisements");
+    return session.get("users/"+ id + "/advertisements");
 }
 
 export function following(type: string, id: string) {
-    return relation.get("following/" + type + "/" + id);
+    return session.get("following/" + type + "/" + id);
 }
 
 export function get_advertisement(id: number) {
-    return ads.get("/advertisements/" + id.toString());
+    return session.get("/advertisements/" + id.toString());
 }
 
 export function register(data: data) {

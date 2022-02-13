@@ -65,7 +65,7 @@ def create_advertisement(
     Authorize: AuthJWT = Depends()
 ):
     Authorize.jwt_required()
-    user_id = Authorize.get_jwt_subject()
+    user_id = str(Authorize.get_jwt_subject())
     # if current_user != user_id:
         # raise HTTPException(status_code=400, detail="No permission to create advertisement") #TODO: check exception type
 
@@ -77,7 +77,7 @@ def create_advertisement(
 )
 def my_advertisements(db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
-    user_id = Authorize.get_jwt_subject()
+    user_id = str(Authorize.get_jwt_subject())
 
     advertisements = crud.get_advertisements_for_user(db, user_id)
     return [
