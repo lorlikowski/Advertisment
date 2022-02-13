@@ -49,5 +49,6 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryModel(CategoryBase):
+    advertisements_count: int
     class Config:
         orm_mode = True

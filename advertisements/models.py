@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, String, Column, DateTime, Text, ForeignKey, Index
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 from datetime import datetime
 
 # from sqlalchemy.dialects.sqlite import UU
@@ -53,6 +53,11 @@ class Category(Base):
         return self.name
     def __repr__(self) -> str:
         return self.name
+
+    @property
+    def advertisements_count(self):
+        return Session.object_session(self).query(Advertisement).with_parent(self).count()
+        # return self.advertisements.count()
 
 # class AdvertisementViewCount(Base):
 #     __tablename__ = "advertisement_views"
