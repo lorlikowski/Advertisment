@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import DOMPurify from 'dompurify';
 import * as auth_api from '@/api/auth'
 
 export default Vue.extend({
@@ -32,7 +33,7 @@ export default Vue.extend({
     async getAdvertisement() {
       auth_api.update_advertisement_views(this.advertisement_id);
       const content = await auth_api.get_advertisement_content(this.advertisement_id);
-      this.content = content.data.content;
+      this.content = DOMPurify.sanitize(content.data.content);
     }
   }
 })
