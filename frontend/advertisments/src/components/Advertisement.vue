@@ -54,7 +54,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      following: []
+      followed: false
     };
   },
   computed: {
@@ -65,23 +65,23 @@ export default Vue.extend({
         return store.getters.isAuthenticated();
       },
       follow() {
-        if (!this.following)
-            return false;
-        return this.isAuthenticated && (this.following.filter(el => el.object_id == this.data.id).length == 0);
-    }
+        return this.isAuthenticated && !this.followed;
+      }
   },
   async created() {
       if(this.isAuthenticated) {
-        const response = await auth_api.following("advertisement", this.authUser);
-        this.following = response.data;
-    }
+        const follows = await auth_api.following_cached("advertisement", this.authUser);
+        this.followed = follows.filter(el => el == this.data.id).length != 0;
+      }
   },
   methods: {
       async follow_ad() {
       try {
         const response = await auth_api.follow_advertisement(this.authUser, this.data.id);
-        if (response.status == 200)
-          alert("Ogłoszenie zaobserwowane");
+        if (response.status == 200) {
+          this.followed = true;
+          // alert("Ogłoszenie zaobserwowane");
+        }
         else
           alert("Przepraszamy wystąpił błąd, spróbuj później");
       }

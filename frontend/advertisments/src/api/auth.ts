@@ -2,6 +2,25 @@ import session from './session'
 
 import {AdvertisementFillableData, AdvertisementSearch} from '@/store/types/advertisement'
 
+const DEFAULT_TIMEOUT = 30;
+
+function getFromCache(key: string, timeout_s: number) {
+    const cache = localStorage.getItem(`cache_${key}`);
+    if (cache == null) {
+        return null;
+    }
+    if (Date.now() - Number(cache) > timeout_s * 1000) {
+        localStorage.removeItem(`cache_${key}`);
+        localStorage.removeItem(key);
+        return null;
+    }
+    return localStorage.getItem(key);
+}
+
+function setInCache(key: string, value: string) {
+    localStorage.setItem(`cache_${key}`, Date.now().toString());
+    localStorage.setItem(key, value);
+}
 interface data {
     email: string;
     password: string;
@@ -36,9 +55,36 @@ export function my_advertisements() {
     
 }
 
-export function following(type: string, id: string) {
-    return session.get("following/" + type + "/" + id);
+export async function following(type: string, id: string) {
+    const response = await session.get("following/" + type + "/" + id);
+    return response.data.map(el => el.object_id);
 }
+
+export async function following_cached(type: string, id: string) {
+    const data = getFromCache(`following_${type}_${id}`, DEFAULT_TIMEOUT);
+    let follows: Array<any> = [];
+    if (data != null) {
+        follows = JSON.parse(data);
+    }
+    else {
+        follows = await following(type, id);
+        setInCache(`following_${type}_${id}`, JSON.stringify(follows));
+    }
+    const local_data = getFromCache(`following_${type}_local_${id}`, DEFAULT_TIMEOUT);
+
+    if (local_data != null) {
+        const local_follows = JSON.parse(local_data)
+
+        for (const el of local_follows) {
+            if (follows.indexOf(el) == -1) {
+                follows.push(el);
+            }
+        }
+    }
+    
+    return follows;
+}
+
 
 export function get_advertisement(id: number) {
     return session.get(`/advertisements/${id}/`);
@@ -95,10 +141,30 @@ export function searchAdvertisements(form: AdvertisementSearch) {
     return session.get(`/advertisements/?${searchParams}`)
 }
 
-export function follow_user(authUser: string, follow: string) {
-    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "user"});
+export async function follow_user(authUser: string, follow: string) {
+    const response = await session.post("/add", {"object_id": follow, "user_id": authUser, "type": "user"});
+    if (response.status == 200) {
+        const s = getFromCache(`following_user_local_${authUser}`, DEFAULT_TIMEOUT) ;
+        let data:Array<any> = [];
+        if (s != null) {
+            data = JSON.parse(s);
+        }
+        data.push(follow);
+        setInCache(`following_user_local_${authUser}`, JSON.stringify(data));
+    }
+    return response;
 }
 
-export function follow_advertisement(authUser: string, follow: string) {
-    return session.post("/add", {"object_id": follow, "user_id": authUser, "type": "advertisement"});
+export async function follow_advertisement(authUser: string, follow: string) {
+    const response = await session.post("/add", {"object_id": follow, "user_id": authUser, "type": "advertisement"});
+    if (response.status == 200) {
+        const s = getFromCache(`following_advertisement_local_${authUser}`, DEFAULT_TIMEOUT) ;
+        let data:Array<any> = [];
+        if (s != null) {
+            data = JSON.parse(s);
+        }
+        data.push(follow);
+        setInCache(`following_advertisement_local_${authUser}`, JSON.stringify(data));
+    }
+    return response;
 }
