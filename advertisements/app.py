@@ -10,8 +10,13 @@ from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import requests
 
 models.Base.metadata.create_all(bind=engine)
+
+NOTIFICATIONS_SERVICE_HOST_URL=os.environ.get("NOTIFICATIONS_SERVICE_HOST_URL")
+
 
 app = FastAPI()
 
@@ -70,6 +75,12 @@ def create_advertisement(
     # raise HTTPException(status_code=400, detail="No permission to create advertisement") #TODO: check exception type
 
     advertisement = crud.create_advertisement(db, advertisement, user=user_id)
+    response = requests.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', json={
+        "advertisement_id": int(advertisement.id),
+        "owner_id": int(user_id),
+        "type": "create"
+    })
+    print(response.json())
     return crud.serialize_advertisement(advertisement)
 
 
@@ -118,13 +129,13 @@ def get_advertisements(
     if title__contains is not None:
         extra_filters["title__contains"] = title__contains
     if date_start__lt is not None:
-        extra_filters["date_start__lt"] = datetime.datetime(date_start__lt)
+        extra_filters["date_start__lt"] = datetime.fromisoformat(date_start__lt)
     if date_start__gt is not None:
-        extra_filters["date_start__gt"] = datetime.datetime(date_start__gt)
+        extra_filters["date_start__gt"] = datetime.fromisoformat(date_start__gt)
     if date_end__lt is not None:
-        extra_filters["date_end__lt"] = datetime.datetime(date_end__lt)
+        extra_filters["date_end__lt"] = datetime.fromisoformat(date_end__lt)
     if date_end__gt is not None:
-        extra_filters["date_end__gt"] = datetime.datetime(date_end__gt)
+        extra_filters["date_end__gt"] = datetime.fromisoformat(date_end__gt)
 
     return [
         crud.serialize_advertisement(advertisement)
@@ -158,7 +169,7 @@ def get_advertisement(
     advertisement_id: int, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()
 ):
     Authorize.jwt_optional()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=current_user is None
@@ -180,14 +191,14 @@ def get_advertisement_content(
     advertisement_id: int, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()
 ):
     Authorize.jwt_optional()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=current_user is None
     )
 
     if advertisement is None or (
-        not advertisement.visible and advertisement.owner != current_user
+        (not advertisement.visible) and advertisement.owner != current_user
     ):
         raise HTTPException(status_code=404, detail="Advertisement not found")
 
@@ -204,7 +215,7 @@ def update_advertisement(
     Authorize: AuthJWT = Depends(),
 ):
     Authorize.jwt_required()
-    current_user = Authorize.get_jwt_subject()
+    current_user = str(Authorize.get_jwt_subject())
 
     advertisement = crud.get_advertisement_by_id(
         db, advertisement_id, only_visible=False
@@ -214,6 +225,11 @@ def update_advertisement(
         raise HTTPException(status_code=404, detail="Advertisement not found")
 
     advertisement = crud.update_advertisement(db, advertisement, advertisement_update)
+    requests.post(NOTIFICATIONS_SERVICE_HOST_URL + 'advertisement', json={
+        "advertisement_id": int(advertisement.id),
+        "owner_id": int(current_user),
+        "type": "update"
+    })
     return crud.serialize_advertisement(advertisement)
 
 
@@ -223,6 +239,9 @@ def update_advertisement(
 )
 def update_advertisement_views(advertisement_id: int, db: Session = Depends(get_db)):
     advertisement = crud.get_advertisement_by_id(db, advertisement_id)
+    if advertisement is None:
+        raise HTTPException(status_code=404, detail="Advertisement not found")
+
     return crud.increment_advertisement_view_count(db, advertisement)
 
 

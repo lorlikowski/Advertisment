@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="(user, index) in users_data" v-bind:key="`user-${index}`">
-      <User :user="user" :id="users[index]" />
+    <div v-for="user in users_data" v-bind:key="user.id">
+      <User :user="user" :follow="follow" :id="user.id" />
     </div>
   </div>
 </template>
@@ -16,26 +16,30 @@ export default Vue.extend({
     User
   },
   props: {
-    users: Array as PropType<string[]>
+    users: Array as PropType<string[]>,
+    follow: Boolean
   },
   data() {
     return {
-      users_data: [{}]
+      users_data: []
     };
   },
-  async created() {
-    this.users_data.pop();
-    for(const user of this.users) {
-      if (user == "")
-        continue;
-      try {
-        const response = await auth_api.get_user(user);
-        this.users_data.push(response.data);
-      }
-      catch(ignore) {
-        continue;
-      }
+  created() {
+    this.loadUsers();
+  },
+  methods: {
+    async loadUsers() {
+      this.users_data = [];
+      const users = await Promise.allSettled(this.users.map(user => this.getUser(user)));
+      this.users_data = users.filter(res => res.status == 'fulfilled').map(res => res.value);
+    },
+    async getUser(id: string) {
+      const response = await auth_api.get_user(id);
+      return {...response.data, id};
     }
+  },
+  watch: {
+    users: 'loadUsers'
   }
 });
 </script>

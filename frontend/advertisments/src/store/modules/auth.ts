@@ -37,7 +37,6 @@ function LoginStart(state: AuthState) {
 }
 
 function LoginSuccess(state: AuthState, id: string) {
-    localStorage.setItem('lo', "1");
     state.user = id;
     state.authenticated = true;
     state.error = false;
@@ -50,12 +49,13 @@ function LoginError(state: AuthState) {
 }
 
 function Logout(state: AuthState) {
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
-    localStorage.removeItem("id");
+    // localStorage.removeItem(TOKEN_STORAGE_KEY);
+    // localStorage.removeItem("id");
+    localStorage.clear();
     state.authenticated = false;
     state.error = false;
     state.user = null;
-    session.defaults.headers.common['Authorization'] = 'Bearer ';
+    delete session.defaults.headers.common['Authorization'];
 }
 
 function setBase(state: AuthState) {

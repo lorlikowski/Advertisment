@@ -55,6 +55,7 @@ def get_advertisements(
     limit: int,
     offset: int = 0,
     ordering: str = AdvertisementOrdering.VIEWS_DSC,
+    only_visible: bool = True,
     **filters: Dict[str, any],
 ):
     processed_filters = []
@@ -83,6 +84,10 @@ def get_advertisements(
                     )
                 ]
             )
+
+    if only_visible:
+        date = datetime.now()
+        processed_filters.append(models.Advertisement.date_start <= date)
 
     if ordering not in list(AdvertisementOrdering):
         raise RequestValidationError(
@@ -152,8 +157,6 @@ def update_advertisement(
     for field, value in update_data.items():
         setattr(db_obj, field, value)
 
-    print(update_data)
-    db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
     return db_obj

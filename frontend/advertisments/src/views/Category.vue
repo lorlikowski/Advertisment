@@ -6,12 +6,13 @@
     <b-row align-h="center">
       <b-col>
         <b-button v-b-toggle.collapse-3 class="m-1">Pokaż podkategorie</b-button>
-        <b-link v-if="categoryObject && categoryObject.parent" :to="{name: 'Category', params: {category: categoryObject.parent}}">Powrót do: {{categoryObject.parent}}</b-link>
+        <b-form-select v-model="selected_ordering" :options="ordering_options" @change="onOrderingChanged"></b-form-select>
+        <b-link v-if="categoryObject && categoryObject.parent" :to="{name: 'Category', params: {category: categoryObject.parent}, query: {perPage: perPage, ordering: ordering}}">Powrót do: {{categoryObject.parent}}</b-link>
       </b-col>
       <b-col cols="12" md="10">
       <b-collapse visible id="collapse-3">
         <b-list-group>
-          <b-list-group-item v-for="subcategory in subcategories" :key="subcategory.name" :to="{name: 'Category', params: {category: subcategory.name}, query: {perPage: perPage}}">{{subcategory.name}}</b-list-group-item>
+          <b-list-group-item v-for="subcategory in subcategories" :key="subcategory.name" :to="{name: 'Category', params: {category: subcategory.name}, query: {perPage: perPage, ordering: ordering}}">{{subcategory.name}}</b-list-group-item>
         </b-list-group>
       </b-collapse>
       <div class="overflower-base">
@@ -41,6 +42,7 @@ import * as auth_api from '@/api/auth'
 import * as authStore from "@/store/modules/auth"
 
 type pagination = number | null;
+type ordering_type = string | null;
 
 interface Category {
   name: string | null,
@@ -61,17 +63,24 @@ export default Vue.extend({
     perPage: {
       type: Number,
       default: 12
+    },
+    ordering: {
+      type: String,
+      default: 'popular'
     }
   },
   data() {
     return {
       advertisements: [],
       categories: [] as Array<Category>,
-      pagination_page: null as pagination
+      pagination_page: null as pagination,
+      selected_ordering: 'popular',
+      ordering_options: [{value: 'popular', text: "Najpopularniejsze"}, {value: "newest", text: "Najnowsze"}]
     }
   },
   created() {
     this.pagination_page = this.page;
+    this.selected_ordering = this.ordering;
     this.getAdvertisements();
     this.getCategories();
   },
@@ -84,12 +93,22 @@ export default Vue.extend({
     perPage: function() {
       this.getAdvertisements();
       this.$forceUpdate();
+    },
+    ordering: function() {
+      this.selected_ordering = this.ordering;
+      this.getAdvertisements();
     }
   },
   methods: {
     async getAdvertisements() {
       if (this.category) {
-        const advertisements = await auth_api.get_popular_advertisements_in_category(this.category, this.page, this.perPage);
+        let advertisements = null;
+        if (this.ordering != 'newest') {
+          advertisements = await auth_api.get_popular_advertisements_in_category(this.category, this.page, this.perPage);
+        }
+        else {
+          advertisements = await auth_api.get_advertisements_in_category(this.category, this.page, this.perPage);
+        }
         this.advertisements = advertisements.data;
       }
       else {
@@ -101,7 +120,12 @@ export default Vue.extend({
       this.categories = categories.data;
     },
     onPaginationChanged(new_value: pagination){
-      this.$router.push(`?page=${new_value}&perPage=${this.perPage}`)
+      const query = {...this.$route.query, page: new_value};
+      this.$router.push({query});
+    },
+    onOrderingChanged(new_value: ordering_type) {
+      const query = {...this.$route.query, ordering: new_value};
+      this.$router.push({query});
     }
   },
   computed: {

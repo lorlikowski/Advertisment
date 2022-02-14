@@ -29,9 +29,9 @@ class AdvertisementFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = models.Advertisement
         sqlalchemy_session = session
-        sqlalchemy_get_or_create = ('id',)
+        # sqlalchemy_get_or_create = ('id',)
 
-    id = factory.sequence(lambda n: n)
+    # id = factory.sequence(lambda n: n)
 
     owner = factory.Faker(
             "random_element", elements=factory.SelfAttribute("..available_user_ids")
@@ -73,19 +73,19 @@ class CategoryFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = models.Category
         sqlalchemy_session = session
-        sqlalchemy_get_or_create = ('id',)
+        # sqlalchemy_get_or_create = ('id',)
 
-    id = factory.sequence(lambda n: n)
 
     @factory.lazy_attribute
     def name(self):
-        return str(self.id)
+        return str(self.num)
 
     @factory.lazy_attribute
     def parent_id(self):
-        if self.id <= self.root_categories:
+        if self.num <= self.root_categories:
             return None
-        return self.id // 2
+        return self.num // 2
 
     class Params:
         root_categories = 7
+        num = factory.sequence(lambda n: n)
