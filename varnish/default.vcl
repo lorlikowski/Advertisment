@@ -89,6 +89,7 @@ sub vcl_backend_response {
     elseif ( bereq.url ~ "^/advertisements/"|| bereq.url ~ "^/users/") {
         unset beresp.http.Cache-Control;
         set beresp.http.Cache-Control = "private, max-age=30";
+        set beresp.http.Vary = "Authorization";
         set beresp.ttl = 30s;
     }
     
