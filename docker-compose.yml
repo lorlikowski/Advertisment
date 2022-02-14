@@ -12,6 +12,7 @@ services:
       - USERS_SERVICE_HOST_URL=http://varnish:80/
       - RELATIONS_SERVICE_HOST_URL=http://varnish:80/
       - DATABASE_URI=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db/advertisement_db_dev
+      - DATABASE_URI_REPLICA=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db_replica/advertisement_db_dev
       - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
     depends_on:
       - advertisement_db
@@ -27,18 +28,31 @@ services:
       - USERS_SERVICE_HOST_URL=http://varnish:80/
       - RELATIONS_SERVICE_HOST_URL=http://varnish:80/
       - DATABASE_URI=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db/advertisement_db_dev
+      - DATABASE_URI_REPLICA=postgresql://advertisement_db_username:advertisement_db_password@advertisement_db_replica/advertisement_db_dev
       - NOTIFICATIONS_SERVICE_HOST_URL=http://notifications:8000/
     depends_on:
       - advertisement_db
 
   advertisement_db:
-    image: postgres:12.1-alpine
+    build: ./postgres/master
     volumes:
       - postgres_data_advertisement:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=advertisement_db_username
       - POSTGRES_PASSWORD=advertisement_db_password
       - POSTGRES_DB=advertisement_db_dev
+      - PG_REP_USER=rep
+      - PG_REP_PASSWORD=123456
+
+  advertisement_db_replica:
+    build: ./postgres/slave
+    environment:
+      - POSTGRES_USER=advertisement_db_username
+      - POSTGRES_PASSWORD=advertisement_db_password
+      - POSTGRES_DB=advertisement_db_dev
+      - PG_REP_USER=rep
+      - PG_REP_PASSWORD=123456
+      - PG_MASTER_HOST=advertisement_db
 
   users:
     build: ./users

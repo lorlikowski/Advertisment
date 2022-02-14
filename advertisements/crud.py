@@ -5,21 +5,22 @@ from sqlalchemy.orm import Session
 from pydantic.error_wrappers import ErrorWrapper
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
+from database import RoutingSession
 import models, schemas
 
 
-def get_category_by_name(db: Session, name: str):
+def get_category_by_name(db: RoutingSession, name: str):
     return db.query(models.Category).filter(models.Category.name == name).first()
 
 
-def get_advertisements_for_user(db: Session, user: str) -> List[models.Advertisement]:
+def get_advertisements_for_user(db: RoutingSession, user: str) -> List[models.Advertisement]:
     return (
         db.query(models.Advertisement).filter(models.Advertisement.owner == user).all()
     )
 
 
 def get_visible_advertisements_for_user(
-    db: Session, user: str
+    db: RoutingSession, user: str
 ) -> List[models.Advertisement]:
     date = datetime.now()
     return (
@@ -51,7 +52,7 @@ advertisement_filter_columns = {
 
 
 def get_advertisements(
-    db: Session,
+    db: RoutingSession,
     limit: int,
     offset: int = 0,
     ordering: str = AdvertisementOrdering.VIEWS_DSC,
@@ -114,7 +115,7 @@ def get_advertisements(
 
 
 def get_advertisement_by_id(
-    db: Session, advertisement_id: int, only_visible: bool = True
+    db: RoutingSession, advertisement_id: int, only_visible: bool = True
 ):
     query = db.query(models.Advertisement).filter(
         models.Advertisement.id == advertisement_id
@@ -126,7 +127,7 @@ def get_advertisement_by_id(
 
 
 def create_advertisement(
-    db: Session, advertisement: schemas.AdvertisementCreate, user: str
+    db: RoutingSession, advertisement: schemas.AdvertisementCreate, user: str
 ):
     date = datetime.now()
     extra_fields = {"date_created": date, "date_modified": date, "owner": user}
@@ -148,7 +149,7 @@ def create_advertisement(
 
 
 def update_advertisement(
-    db: Session,
+    db: RoutingSession,
     db_obj: models.Advertisement,
     update_data: Union[schemas.AdvertisementUpdate, Dict[str, Any]],
 ):
@@ -171,7 +172,7 @@ def increment_advertisement_view_count(
     return advertisement
 
 def get_popular_advertisements(
-    db: Session,
+    db: RoutingSession,
     limit: int,
     offset: int = 0,
     only_visible: bool = True,
@@ -188,7 +189,7 @@ def get_popular_advertisements(
     )
 
 
-def get_categories(db: Session):
+def get_categories(db: RoutingSession):
     return db.query(models.Category).all()
 
 
@@ -214,7 +215,7 @@ def get_popular_advertisements_in_category(
 
 
 def get_advertisements_in_category(
-    db: Session,
+    db: RoutingSession,
     category: models.Category,
     limit: int,
     offset: int = 0,
@@ -234,7 +235,7 @@ def get_advertisements_in_category(
     )
 
 
-def create_category(db: Session, category: schemas.CategoryCreate):
+def create_category(db: RoutingSession, category: schemas.CategoryCreate):
     extra_fields = {}
     if category.parent is not None:
         parent = get_category_by_name(db, category.parent)

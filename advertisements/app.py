@@ -8,12 +8,12 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 from sqlalchemy.orm import Session
 
 import crud, models, schemas
-from database import SessionLocal, engine
+from database import SessionLocal, engines
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import requests
 
-models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engines["master"])
 
 NOTIFICATIONS_SERVICE_HOST_URL=os.environ.get("NOTIFICATIONS_SERVICE_HOST_URL")
 
