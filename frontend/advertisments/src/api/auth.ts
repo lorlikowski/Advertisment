@@ -47,7 +47,7 @@ export function get_user(id: string) {
 }
 
 export function advertisements(id: string) {
-    return session.get("users/"+ id + "/advertisements");
+    return session.get("users/"+ id + "/advertisements/");
 }
 
 export function my_advertisements() {
